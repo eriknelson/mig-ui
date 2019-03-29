@@ -1,1 +1,2 @@
 export { MigResource } from './mig';
+

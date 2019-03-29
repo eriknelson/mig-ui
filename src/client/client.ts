@@ -1,4 +1,4 @@
-import { IResource } from '../resources/common';
+import { IResource } from './resources/common';
 import axios, { AxiosPromise, AxiosInstance } from 'axios';
 
 export default class ClusterClient {
@@ -23,10 +23,10 @@ export default class ClusterClient {
   public get(resource: IResource, name: string): AxiosPromise<any> {
     return this.requester.get(resource.namedPath(name));
   }
-  public patch(resource: IResource, name: string, patch: Object): AxiosPromise<any> {
+  public patch(resource: IResource, name: string, patch: object): AxiosPromise<any> {
     return this.requester.patch(resource.namedPath(name), patch);
   }
-  public create(resource: IResource, newObject: Object): AxiosPromise<any> {
+  public create(resource: IResource, newObject: object): AxiosPromise<any> {
     return this.requester.post(resource.listPath(), newObject);
   }
   public delete(resource: IResource, name: string): AxiosPromise<any> {

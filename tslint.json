@@ -30,6 +30,8 @@
       "comment-format": false,
       "member-ordering": false,
       "jsx-wrap-multiline": false,
+      "max-classes-per-file": false,
+      "no-namespace": false,
       "quotemark": [true, "single", "jsx-double"],
       "ordered-imports": false,
       "variable-name": false

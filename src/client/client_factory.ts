@@ -21,15 +21,8 @@ export class ClientFactoryMissingApiRoot extends Error {
   }
 }
 
-export class ClientFactory {
-  private getState: () => any;
-
-  constructor(getState: () => any) {
-    this.getState = getState;
-  }
-
-  public hostCluster() {
-    const state = this.getState();
+export namespace ClientFactory {
+  export function hostCluster(state: any) {
     if(!!state.auth.user) {
       throw new ClientFactoryMissingUserError();
     }
@@ -37,8 +30,7 @@ export class ClientFactory {
     return new ClusterClient(state.migMeta.clusterApi, state.auth.user.token);
   }
 
-  public forCluster(clusterName: string) {
-    const state = this.getState();
+  export function forCluster(clusterName: string, state: any) {
     const clusters = state.kube.clusterregistry_k8s_io.clusters;
     const clusterNotFound = !(clusterName in clusters);
     if(clusterNotFound) {

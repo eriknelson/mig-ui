@@ -1,6 +1,6 @@
 import {
   NamespacedResource,
-  IGroupVersionKindPlural
+  IGroupVersionKindPlural,
 } from './common';
 
 export class MigResource extends NamespacedResource {
@@ -12,7 +12,7 @@ export class MigResource extends NamespacedResource {
       group: 'migration.openshift.io',
       version: 'v1alpha1',
       kindPlural: kind,
-    }
+    };
   }
   gvk(): IGroupVersionKindPlural {
     return this._gvk;

@@ -23,7 +23,7 @@ export class ClientFactoryMissingApiRoot extends Error {
 
 export namespace ClientFactory {
   export function hostCluster(state: any) {
-    if(!!state.auth.user) {
+    if (!!state.auth.user) {
       throw new ClientFactoryMissingUserError();
     }
 
@@ -33,7 +33,7 @@ export namespace ClientFactory {
   export function forCluster(clusterName: string, state: any) {
     const clusters = state.kube.clusterregistry_k8s_io.clusters;
     const clusterNotFound = !(clusterName in clusters);
-    if(clusterNotFound) {
+    if (clusterNotFound) {
       throw new ClientFactoryUnknownClusterError();
     }
     const cluster = clusters[clusterName];

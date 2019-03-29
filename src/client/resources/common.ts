@@ -6,12 +6,12 @@ export interface IResource {
 export interface IGroupVersionKindPlural {
   group: string;
   version: string;
-  kindPlural: string
+  kindPlural: string;
 }
 
 export abstract class NamespacedResource {
   protected abstract gvk(): IGroupVersionKindPlural;
-  private namespace: string
+  private namespace: string;
   constructor(namespace: string) {
     this.namespace = namespace;
   }

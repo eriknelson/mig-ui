@@ -12,8 +12,10 @@ export default class ClusterClient {
     this.requester = axios.create({
       baseURL: this.apiRoot,
       headers: {
-        Authorization: `Bearer ${this.token}`,
+        'Authorization': `Bearer ${this.token}`,
+        'Content-Type': 'application/json',
       },
+      responseType: 'json',
     });
   }
 

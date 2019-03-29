@@ -15,7 +15,8 @@
     "start:remote": "./scripts/remote-dev.sh",
     "start:mock-server": "node mock/server.js",
     "type-check": "tsc --noEmit",
-    "type-check:watch": "npm run type-check -- --watch"
+    "type-check:watch": "npm run type-check -- --watch",
+    "test": "jest"
   },
   "devDependencies": {
     "@babel/core": "7.4.0",

@@ -1,7 +1,15 @@
 import { IResource } from './resources/common';
 import axios, { AxiosPromise, AxiosInstance } from 'axios';
 
-export default class ClusterClient {
+export interface IClusterClient {
+  list(resource: IResource): Promise<any>;
+  get(resource: IResource, name: string): Promise<any>;
+  patch(resource: IResource, name: string, patch: object): Promise<any>;
+  create(resource: IResource, newObject: object): Promise<any>
+  delete(resource: IResource, name: string): Promise<any>;
+}
+
+export class ClusterClient {
   private token: string;
   private apiRoot: string;
   private requester: AxiosInstance;

@@ -1,22 +1,22 @@
 import ClusterClient from './client';
 
 export class ClientFactoryUnknownClusterError extends Error {
-  constructor() {
-    super();
+  constructor(clusterName: string) {
+    super(`Unknown cluster requested: ${clusterName}`);
     Object.setPrototypeOf(this, ClientFactoryUnknownClusterError.prototype);
   }
 }
 
 export class ClientFactoryMissingUserError extends Error {
   constructor() {
-    super();
+    super('Current user missing from state tree');
     Object.setPrototypeOf(this, ClientFactoryMissingUserError.prototype);
   }
 }
 
 export class ClientFactoryMissingApiRoot extends Error {
   constructor() {
-    super();
+    super('apiRoot missing from migMeta');
     Object.setPrototypeOf(this, ClientFactoryMissingUserError.prototype);
   }
 }
@@ -26,6 +26,9 @@ export namespace ClientFactory {
     if (!!state.auth.user) {
       throw new ClientFactoryMissingUserError();
     }
+    if(!!state.migMeta.clusterApi) {
+      throw new ClientFactoryMissingApiRoot();
+    }
 
     return new ClusterClient(state.migMeta.clusterApi, state.auth.user.token);
   }
@@ -34,7 +37,7 @@ export namespace ClientFactory {
     const clusters = state.kube.clusterregistry_k8s_io.clusters;
     const clusterNotFound = !(clusterName in clusters);
     if (clusterNotFound) {
-      throw new ClientFactoryUnknownClusterError();
+      throw new ClientFactoryUnknownClusterError(clusterName);
     }
     const cluster = clusters[clusterName];
     // TODO: Need to get some more information from the cluster registry about:

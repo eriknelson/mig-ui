@@ -1,12 +1,12 @@
-import { IResource } from './resources/common';
+import { KubeResource } from './resources/common';
 import axios, { AxiosPromise, AxiosInstance } from 'axios';
 
 export interface IClusterClient {
-  list(resource: IResource): Promise<any>;
-  get(resource: IResource, name: string): Promise<any>;
-  patch(resource: IResource, name: string, patch: object): Promise<any>;
-  create(resource: IResource, newObject: object): Promise<any>
-  delete(resource: IResource, name: string): Promise<any>;
+  list(resource: KubeResource): Promise<any>;
+  get(resource: KubeResource, name: string): Promise<any>;
+  patch(resource: KubeResource, name: string, patch: object): Promise<any>;
+  create(resource: KubeResource, newObject: object): Promise<any>;
+  delete(resource: KubeResource, name: string): Promise<any>;
 }
 
 export class ClusterClient {
@@ -27,19 +27,19 @@ export class ClusterClient {
     });
   }
 
-  public list(resource: IResource): AxiosPromise<any> {
+  public list(resource: KubeResource): AxiosPromise<any> {
     return this.requester.get(resource.listPath());
   }
-  public get(resource: IResource, name: string): AxiosPromise<any> {
+  public get(resource: KubeResource, name: string): AxiosPromise<any> {
     return this.requester.get(resource.namedPath(name));
   }
-  public patch(resource: IResource, name: string, patch: object): AxiosPromise<any> {
+  public patch(resource: KubeResource, name: string, patch: object): AxiosPromise<any> {
     return this.requester.patch(resource.namedPath(name), patch);
   }
-  public create(resource: IResource, newObject: object): AxiosPromise<any> {
+  public create(resource: KubeResource, newObject: object): AxiosPromise<any> {
     return this.requester.post(resource.listPath(), newObject);
   }
-  public delete(resource: IResource, name: string): AxiosPromise<any> {
+  public delete(resource: KubeResource, name: string): AxiosPromise<any> {
     return this.requester.delete(resource.namedPath(name));
   }
 }

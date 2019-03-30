@@ -9,7 +9,11 @@ import { storageOperations } from '../storage/duck';
 class DynamicModalComponent extends React.Component<any, any> {
   handleAddItemSubmit = (type, dataItem) => {
     if (type === 'cluster') {
-      this.props.addCluster(dataItem);
+      // TODO: This is going to be more involved, needs something that will
+      // take in the form values and hand back an object that can get posted
+      // to the server.
+      // this.props.addCluster(dataItem);
+      console.log('NSK: ', dataItem);
     }
     if (type === 'storage') {
       this.props.addStorage(dataItem);

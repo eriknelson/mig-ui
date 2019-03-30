@@ -5,7 +5,7 @@ import {
 
 export class ClusterRegistryResource extends NamespacedResource {
   private _gvk: IGroupVersionKindPlural;
-  constructor(kind: ClusterRegistryResource.Kind, namespace: string) {
+  constructor(kind: ClusterRegistryResourceKind, namespace: string) {
     super(namespace);
 
     this._gvk = {
@@ -19,8 +19,6 @@ export class ClusterRegistryResource extends NamespacedResource {
   }
 }
 
-export namespace ClusterRegistryResource {
-  export enum Kind {
-    Cluster = 'clusters',
-  }
+export enum ClusterRegistryResourceKind {
+  Cluster = 'clusters',
 }

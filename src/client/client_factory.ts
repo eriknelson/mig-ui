@@ -1,4 +1,4 @@
-import ClusterClient from './client';
+import { ClusterClient } from './client';
 
 export class ClientFactoryUnknownClusterError extends Error {
   constructor(clusterName: string) {
@@ -21,19 +21,18 @@ export class ClientFactoryMissingApiRoot extends Error {
   }
 }
 
-export namespace ClientFactory {
-  export function hostCluster(state: any) {
+export const ClientFactory = {
+  hostCluster: (state: any) => {
     if (!!state.auth.user) {
       throw new ClientFactoryMissingUserError();
     }
-    if(!!state.migMeta.clusterApi) {
+    if (!!state.migMeta.clusterApi) {
       throw new ClientFactoryMissingApiRoot();
     }
 
     return new ClusterClient(state.migMeta.clusterApi, state.auth.user.token);
-  }
-
-  export function forCluster(clusterName: string, state: any) {
+  },
+  forCluster: (clusterName: string, state: any) => {
     const clusters = state.kube.clusterregistry_k8s_io.clusters;
     const clusterNotFound = !(clusterName in clusters);
     if (clusterNotFound) {
@@ -56,5 +55,5 @@ export namespace ClientFactory {
     // const token = state.kube.core.secrets.relevant_cluster.token;
     // return new ClusterClient(apiRoot, cluster.token);
     throw new Error('forCluster NOT IMPLEMENTED');
-  }
+  },
 }

@@ -5,7 +5,7 @@ import {
 
 export class MigResource extends NamespacedResource {
   private _gvk: IGroupVersionKindPlural;
-  constructor(kind: MigResource.Kind, namespace: string) {
+  constructor(kind: MigResourceKind, namespace: string) {
     super(namespace);
 
     this._gvk = {
@@ -19,12 +19,10 @@ export class MigResource extends NamespacedResource {
   }
 }
 
-export namespace MigResource {
-  export enum Kind {
-    MigPlan = 'migplans',
-    MigStorage = 'migstorage',
-    MigAssetCollection = 'migassetcollections',
-    MigStage = 'migstages',
-    MigMigration = 'migmigrations',
-  }
+export enum MigResourceKind {
+  MigPlan = 'migplans',
+  MigStorage = 'migstorage',
+  MigAssetCollection = 'migassetcollections',
+  MigStage = 'migstages',
+  MigMigration = 'migmigrations',
 }

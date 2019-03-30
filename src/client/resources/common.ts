@@ -1,3 +1,5 @@
+export type KubeResource = NamespacedResource | ClusterResource;
+
 export interface IResource {
   listPath(): string;
   namedPath(name: string): string;
@@ -10,8 +12,8 @@ export interface IGroupVersionKindPlural {
 }
 
 export abstract class NamespacedResource {
-  protected abstract gvk(): IGroupVersionKindPlural;
-  private namespace: string;
+  public abstract gvk(): IGroupVersionKindPlural;
+  public namespace: string;
   constructor(namespace: string) {
     this.namespace = namespace;
   }
@@ -33,7 +35,7 @@ export abstract class NamespacedResource {
 }
 
 export abstract class ClusterResource {
-  protected abstract gvk(): IGroupVersionKindPlural;
+  public abstract gvk(): IGroupVersionKindPlural;
   public listPath(): string {
     return [
       '/apis',

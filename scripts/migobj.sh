@@ -31,7 +31,7 @@ echo ""
 
 echo "[Service Account Secret]"
 if [[ "$action" == "get" ]];then
-  oc get secrets | grep ocp4
+  oc get secrets | grep ocp3
 else
   oc delete secret $2
 fi

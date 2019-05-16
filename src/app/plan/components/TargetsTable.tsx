@@ -73,6 +73,8 @@ class TargetsTable extends React.Component<IProps, IState> {
     const { values } = this.props;
     const { rows } = this.state;
 
+    console.log('rows:', rows)
+
     if (values.selectedNamespaces !== null && values.targetCluster !== null) {
       rows.forEach(n => console.log(n.metadata.name))
       return (
@@ -97,7 +99,7 @@ class TargetsTable extends React.Component<IProps, IState> {
                 </div>
               ),
               accessor: 'metadata.name',
-              Cell: this.renderEditable,
+              //Cell: this.renderEditable,
             },
             {
               Header: () => (

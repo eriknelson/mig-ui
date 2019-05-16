@@ -74,6 +74,7 @@ class TargetsTable extends React.Component<IProps, IState> {
     const { rows } = this.state;
 
     if (values.selectedNamespaces !== null && values.targetCluster !== null) {
+      rows.forEach(n => console.log(n.metadata.name))
       return (
         <ReactTable
           css={css`
@@ -95,7 +96,7 @@ class TargetsTable extends React.Component<IProps, IState> {
                 >Source Project Name
                 </div>
               ),
-              accessor: 'name',
+              accessor: 'metadata.name',
               Cell: this.renderEditable,
             },
             {

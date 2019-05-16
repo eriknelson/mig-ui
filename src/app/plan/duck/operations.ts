@@ -226,7 +226,9 @@ const fetchNamespacesForCluster = (clusterName) => {
   return (dispatch, getState) => {
     const client: IClusterClient = ClientFactory.forCluster(clusterName, getState());
     const nsResource = new CoreClusterResource(CoreClusterResourceKind.Namespace);
+    console.log('trying to list namespaces')
     client.list(nsResource).then(res => {
+      console.log('got list of namespaces: ', res.data.items)
       dispatch(sourceClusterNamespacesFetchSuccess(res.data.items));
     }).catch(err => AlertCreators.alertError('Failed to load namespaces for cluster'));
   };

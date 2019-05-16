@@ -48,57 +48,39 @@ class NamespaceTable extends React.Component<IProps, IState> {
 
   componentDidMount() {
     if (this.props.sourceCluster) {
-      this.setState({
-        rows: [{
-          name: 'robot-shop',
-          displayName: '',
-          pods: '12',
-          services: '12',
-          targetName: 'robot-shop',
-        }, {
-          name: 'sandbox',
-          displayName: '',
-          pods: '3',
-          services: '1',
-          targetName: 'sandbox',
-        }],
-      });
-      //temporary for ui development
-      // this.props.fetchNamespacesForCluster(
-      //   this.props.sourceCluster.metadata.name,
-      // );
+      //this.setState({
+        //rows: [{
+          //name: 'robot-shop',
+          //displayName: '',
+          //pods: '12',
+          //services: '12',
+          //targetName: 'robot-shop',
+        //}, {
+          //name: 'sandbox',
+          //displayName: '',
+          //pods: '3',
+          //services: '1',
+          //targetName: 'sandbox',
+        //}],
+      //});
 
-      // this.setState({ rows: this.props.sourceCluster.metadata.namespaces });
+      console.log('attempting: ', this.props.sourceCluster)
+      this.props.fetchNamespacesForCluster(
+        this.props.sourceCluster.MigCluster.metadata.name,
+      );
+
+      //this.setState({ rows: this.props.sourceCluster.metadata.namespaces });
     }
   }
-  // componentDidUpdate(prevProps, prevState) {
-  //   if (prevProps.sourceCluster !== this.props.sourceCluster) {
-  //     this.setState({
-  //       rows: [
-  //         { name: 'OCP_Project1', displayName: 'My Project 1', pods: '3', services: '6' },
-  //         { name: 'OCP_Project2', displayName: 'My Project 2', pods: '4', services: '5' },
-  //         { name: 'OCP_Project3', displayName: 'My Project 3', pods: '4', services: '7' },
-  //       ],
-  //     });
-  //     //temporary for ui development
-  //     // this.props.fetchNamespacesForCluster(
-  //     //   this.props.sourceCluster.metadata.name,
-  //     // );
-  //   }
-  //   if (
-  //     prevProps.sourceClusterNamespaces !== this.props.sourceClusterNamespaces
-  //   ) {
-  //     this.setState({
-  //       rows: [
-  //         { name: 'OCP_Project1', displayName: 'My Project 1', pods: '3', services: '6' },
-  //         { name: 'OCP_Project2', displayName: 'My Project 2', pods: '4', services: '5' },
-  //         { name: 'OCP_Project3', displayName: 'My Project 3', pods: '4', services: '7' },
-  //       ],
-  //     });
-  //     //temporary for ui development
-  //     // this.setState({ rows: this.props.sourceClusterNamespaces });
-  //   }
-  // }
+
+   componentDidUpdate(prevProps, prevState) {
+     if (
+       prevProps.sourceClusterNamespaces !== this.props.sourceClusterNamespaces
+     ) {
+        this.setState({ rows: this.props.sourceClusterNamespaces });
+     }
+   }
+
   selectRow = row => {
     const index = row.index;
     const checkedCopy = this.state.checked;
@@ -125,6 +107,7 @@ class NamespaceTable extends React.Component<IProps, IState> {
   render() {
     const { sourceCluster } = this.props;
     const { rows } = this.state;
+    console.log('rows: ', rows)
     const StyledTextContent = styled(TextContent)`
       margin: 1em 0 1em 0;
     `;
@@ -166,7 +149,7 @@ class NamespaceTable extends React.Component<IProps, IState> {
                     }}
                   >Name
                   </div>),
-                accessor: 'name',
+                accessor: 'metadata.name',
               },
               {
                 Header: () => (

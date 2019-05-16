@@ -34,6 +34,8 @@ export const ClientFactory = {
   },
   forCluster: (clusterName: string, state: any) => {
     const { clusterApi, accessToken } = getAuthForCluster(clusterName, state);
+    console.log('Got cluster api: ', clusterApi)
+    console.log('Got accessToken:', accessToken)
     return new ClusterClient(clusterApi, accessToken);
   },
 };
@@ -44,14 +46,16 @@ interface IAuthDetails {
 }
 
 function getAuthForCluster(clusterName: string, state: any): IAuthDetails {
+  console.log('getAuthForCluster, clusterList: ', state.cluster.clusterList)
   const cluster = state.cluster.clusterList
     .find(c => c.MigCluster.metadata.name === clusterName);
+  console.log('found cluster: ', cluster)
   if (!cluster) {
     throw new ClientFactoryUnknownClusterError(clusterName);
   }
   const clusterApi =
     cluster.Cluster.spec.kubernetesApiEndpoints.serverEndpoints[0].serverAddress;
-  const accessToken = atob(cluster.Secret.data.token);
+  const accessToken = atob(cluster.Secret.data.saToken);
 
   return { clusterApi, accessToken };
 }

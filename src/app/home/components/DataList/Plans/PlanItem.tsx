@@ -29,6 +29,8 @@ const PlanItem = ({ plan, planIndex, isLoading, ...props }) => {
   `;
   const [isOpen, toggleOpen] = useOpenModal(false);
 
+  console.log('plan:', plan);
+
   return (
     <DataListItem key={planIndex} aria-labelledby="simple-item1">
       <DataListItemRow>
@@ -40,7 +42,7 @@ const PlanItem = ({ plan, planIndex, isLoading, ...props }) => {
                   <PlanStatusIcon status={plan.planState.status.state || 'N/A'} />
                 </Box>
                 <Box m="auto 0 auto 0">
-                  <span>{plan.MigPlan.metadata.name}</span>
+                  <span>{plan.metadata.name}</span>
                 </Box>
               </Flex>
             </DataListCell>,

@@ -10,7 +10,11 @@ import {
   CoreNamespacedResourceKind,
 } from '../../../client/resources';
 
-import { createMigPlan, createMigMigration, createMigPlanNoStorage } from '../../../client/resources/conversions';
+import {
+  createMigPlan,
+  createMigMigration,
+  createMigPlanNoStorage,
+} from '../../../client/resources/conversions';
 
 /* tslint:disable */
 const uuidv1 = require('uuid/v1');
@@ -23,6 +27,9 @@ const addPlanSuccess = Creators.addPlanSuccess;
 // const removePlanSuccess = Creators.removePlanSuccess;
 // const removePlanFailure = Creators.removePlanFailure;
 const sourceClusterNamespacesFetchSuccess = Creators.sourceClusterNamespacesFetchSuccess;
+
+const PollingInterval = 3000;
+const PvsDiscoveredType = 'PvsDiscovered';
 
 const runStage = plan => {
   return (dispatch, getState) => {
@@ -99,35 +106,36 @@ const addPlan = migPlan => {
         migPlan.targetCluster,
         migPlan.namespaces,
       );
-      console.log('did migplan conversion', migPlanObj);
 
-      // const migPlanObj = createMigPlan(
-      //   migPlan.planName,
-      //   migMeta.namespace,
-      //   migPlan.sourceCluster,
-      //   migPlan.targetCluster,
-      //   migPlan.selectedStorage,
-      // );
-
-      // const assetCollectionObj = createAssetCollectionObj(
-      //   clusterValues.name,
-      //   migMeta.namespace,
-      //   clusterValues.url,
-      // );
-
-      console.log('trying to create the following migplan: ', migPlanObj);
-      const result = client.create(
+      let createRes = await client.create(
         new MigResource(MigResourceKind.MigPlan, migMeta.namespace),
         migPlanObj,
       )
 
-      console.log('got the result: ', result);
+      dispatch(addPlanSuccess(createRes.data));
 
-      // const plan = arr.reduce((accum, res) => {
-      //   accum[res.data.kind] = res.data;
-      //   return accum;
-      // }, {});
-      // dispatch(addPlanSuccess(plan));
+      console.debug('Beginning PV polling')
+
+      const interval = setInterval(async () => {
+        const planName = migPlan.planName;
+
+        const getRes = await client.get(
+          new MigResource(MigResourceKind.MigPlan, migMeta.namespace),
+          planName
+        )
+
+        const plan = getRes.data;
+        const pvsDiscovered = !!plan.status.conditions.find(c => {
+          return c.type === PvsDiscoveredType;
+        });
+
+        if(pvsDiscovered) {
+          console.debug('Discovered PVs, clearing interaval.')
+          clearInterval(interval);
+        }
+
+        dispatch(Creators.updatePlan(plan))
+      }, PollingInterval);
     } catch (err) {
       dispatch(AlertCreators.alertError(err));
     }

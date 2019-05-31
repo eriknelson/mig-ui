@@ -182,6 +182,11 @@ export function createMigPlanNoStorage(
         namespace,
       },
       namespaces,
+      // TODO: Need to rip this out once we have this available
+      migStorageRef: {
+        name: 'my-s2-bucket',
+        namespace,
+      }
     },
   };
 }

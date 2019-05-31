@@ -1,5 +1,6 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
+import { connect } from 'react-redux';
 
 import React from 'react';
 import { withFormik } from 'formik';
@@ -44,13 +45,14 @@ class WrappedWizard extends React.Component<any, any> {
     });
     console.log('prev.prevId == ', prev.prevId);
     console.log('MigSourceStepId == ', MigSourceStepId);
-    if(prev.prevId === MigSourceStepId) {
-      console.log('did the thing happen?');
-      planOperations.addPlan({
+
+    if (prev.prevId === MigSourceStepId) {
+      console.log('Got a match on the thing');
+      this.props.addPlan({
         planName: this.props.values.planName,
         sourceCluster: this.props.values.sourceCluster,
         targetCluster: HostClusterName,
-        namespaces: this.props.values.selectedNamespaces,
+        namespaces: this.props.values.selectedNamespaces.map(ns => ns.metadata.name),
       })
     }
     if (curr.id === 5) {
@@ -263,4 +265,48 @@ const Wizard: any = withFormik({
   displayName: 'Page One Form',
 })(WrappedWizard);
 
-export default Wizard;
+
+const mapStateToProps = state => {
+  return {
+    connectionStatus: '',
+    planName: '',
+    sourceCluster: '',
+    targetCluster: null,
+    selectedNamespaces: [],
+    selectedStorage: '',
+    persistentVolumes: [
+      // {
+      //   name: 'pv007',
+      //   project: 'robot-shop',
+      //   storageClass: '',
+      //   size: '100 Gi',
+      //   claim: 'robot-shop/mongodata',
+      //   type: 'copy',
+      //   details: '',
+      //   id: 1,
+      // },
+      // {
+      //   name: 'pv097',
+      //   project: 'robot-shop',
+      //   storageClass: '',
+      //   size: '100 Gi',
+      //   claim: 'robot-shop/mysqldata',
+      //   type: 'copy',
+      //   details: '',
+      //   id: 2,
+      // },
+    ],
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    addPlan: plan => dispatch(planOperations.addPlan(plan)),
+  }
+}
+
+// export default Wizard;
+
+export default connect(
+  mapStateToProps, mapDispatchToProps,
+)(Wizard)

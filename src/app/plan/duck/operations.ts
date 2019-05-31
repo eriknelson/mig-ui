@@ -10,7 +10,7 @@ import {
   CoreNamespacedResourceKind,
 } from '../../../client/resources';
 
-import { createMigPlan, createMigMigration } from '../../../client/resources/conversions';
+import { createMigPlan, createMigMigration, createMigPlanNoStorage } from '../../../client/resources/conversions';
 
 /* tslint:disable */
 const uuidv1 = require('uuid/v1');
@@ -86,39 +86,48 @@ const runMigration = plan => {
 };
 
 const addPlan = migPlan => {
+  console.log('addPlan called with migplan: ', migPlan);
   return async (dispatch, getState) => {
     try {
       const { migMeta } = getState();
       const client: IClusterClient = ClientFactory.hostCluster(getState());
 
-      const migPlanObj = createMigPlan(
+      const migPlanObj = createMigPlanNoStorage(
         migPlan.planName,
         migMeta.namespace,
         migPlan.sourceCluster,
         migPlan.targetCluster,
-        migPlan.selectedStorage,
-        'temp asset name'
+        migPlan.namespaces,
       );
+      console.log('did migplan conversion', migPlanObj);
+
+      // const migPlanObj = createMigPlan(
+      //   migPlan.planName,
+      //   migMeta.namespace,
+      //   migPlan.sourceCluster,
+      //   migPlan.targetCluster,
+      //   migPlan.selectedStorage,
+      // );
 
       // const assetCollectionObj = createAssetCollectionObj(
       //   clusterValues.name,
       //   migMeta.namespace,
       //   clusterValues.url,
       // );
-      const secretResource = new CoreNamespacedResource(
-        CoreNamespacedResourceKind.Secret,
-        migMeta.configNamespace
-      );
 
-      const migPlanResource = new MigResource(MigResourceKind.MigPlan, migMeta.namespace);
+      console.log('trying to create the following migplan: ', migPlanObj);
+      const result = client.create(
+        new MigResource(MigResourceKind.MigPlan, migMeta.namespace),
+        migPlanObj,
+      )
 
-      const arr = await Promise.all([client.create(migPlanResource, migPlanObj)]);
+      console.log('got the result: ', result);
 
-      const plan = arr.reduce((accum, res) => {
-        accum[res.data.kind] = res.data;
-        return accum;
-      }, {});
-      dispatch(addPlanSuccess(plan));
+      // const plan = arr.reduce((accum, res) => {
+      //   accum[res.data.kind] = res.data;
+      //   return accum;
+      // }, {});
+      // dispatch(addPlanSuccess(plan));
     } catch (err) {
       dispatch(AlertCreators.alertError(err));
     }

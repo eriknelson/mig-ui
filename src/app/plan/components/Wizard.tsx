@@ -13,6 +13,11 @@ import ResultsStep from './ResultsStep';
 import ConfirmationStep from './ConfirmationStep';
 import styled from '@emotion/styled';
 import { css } from '@emotion/core';
+import planOperations from '../duck/operations';
+
+const MigSourceStepId = 2;
+const PVDiscoveryStepId = 3;
+const HostClusterName = 'host';
 
 class WrappedWizard extends React.Component<any, any> {
   state = {
@@ -32,9 +37,22 @@ class WrappedWizard extends React.Component<any, any> {
   };
 
   onMove = (curr, prev) => {
+    console.log('this.props', this.props);
+    console.log('step id:', curr, prev);
     this.setState({
       step: curr.id,
     });
+    console.log('prev.prevId == ', prev.prevId);
+    console.log('MigSourceStepId == ', MigSourceStepId);
+    if(prev.prevId === MigSourceStepId) {
+      console.log('did the thing happen?');
+      planOperations.addPlan({
+        planName: this.props.values.planName,
+        sourceCluster: this.props.values.sourceCluster,
+        targetCluster: HostClusterName,
+        namespaces: this.props.values.selectedNamespaces,
+      })
+    }
     if (curr.id === 5) {
       this.props.handleSubmit();
     }

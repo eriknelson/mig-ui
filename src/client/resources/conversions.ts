@@ -133,7 +133,6 @@ export function createMigPlan(
   sourceClusterObj: any,
   destinationClusterObj: any,
   storageObj: any,
-  assetObj: any
 ) {
   return {
     apiVersion: 'migration.openshift.io/v1alpha1',
@@ -155,13 +154,38 @@ export function createMigPlan(
         name: storageObj,
         namespace,
       },
-      migAssetCollectionRef: {
-        name: assetObj,
-        namespace,
-      },
     },
   };
 }
+
+export function createMigPlanNoStorage(
+  name: string,
+  namespace: string,
+  sourceClusterObj: any,
+  destinationClusterObj: any,
+  namespaces: Array<string>,
+) {
+  return {
+    apiVersion: 'migration.openshift.io/v1alpha1',
+    kind: 'MigPlan',
+    metadata: {
+      name,
+      namespace,
+    },
+    spec: {
+      srcMigClusterRef: {
+        name: sourceClusterObj,
+        namespace,
+      },
+      destMigClusterRef: {
+        name: destinationClusterObj,
+        namespace,
+      },
+      namespaces,
+    },
+  };
+}
+
 export function createMigMigration(migID: string, planName: string, namespace: string) {
   return {
     apiVersion: 'migration.openshift.io/v1alpha1',

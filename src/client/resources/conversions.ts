@@ -232,6 +232,8 @@ export function createMigMigration(migID: string, planName: string, namespace: s
         name: planName,
         namespace,
       },
+      quiescePods: true,
+      stage: false,
     },
   };
 }

@@ -64,13 +64,10 @@ class WrappedWizard extends React.Component<any, any> {
       errors,
       handleChange,
       handleBlur,
-      handleSubmit,
       setFieldTouched,
       setFieldValue,
       clusterList,
       storageList,
-      trigger,
-      resetForm,
     } = this.props;
 
     const steps = [
@@ -173,7 +170,7 @@ class WrappedWizard extends React.Component<any, any> {
     return (
       <React.Fragment>
         <Flex>
-          <form onSubmit={handleSubmit}>
+          <form>
             <PFWizard
               css={customStyle}
               isOpen={this.props.isOpen}

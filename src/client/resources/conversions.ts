@@ -158,6 +158,31 @@ export function createMigPlan(
   };
 }
 
+export function updateMigPlanFromValues(
+  migPlan: any,
+  planValues: any,
+) {
+  const updatedSpec = Object.assign({}, migPlan.spec);
+
+  updatedSpec.migStorageRef = {
+    name: planValues.selectedStorage,
+    namespace: migPlan.metadata.namespace,
+  }
+
+  updatedSpec.persistentVolumes = updatedSpec.persistentVolumes.map(v => {
+    const userPv = planValues.persistentVolumes.find(upv => upv.name === v.name)
+    v.action = userPv.type;
+    return v;
+  });
+
+  return {
+    apiVersion: 'migration.openshift.io/v1alpha1',
+    kind: 'MigPlan',
+    metadata: migPlan.metadata,
+    spec: updatedSpec,
+  };
+}
+
 export function createMigPlanNoStorage(
   name: string,
   namespace: string,

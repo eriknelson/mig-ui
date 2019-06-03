@@ -93,7 +93,6 @@ const runMigration = plan => {
 };
 
 const addPlan = migPlan => {
-  console.log('addPlan called with migplan: ', migPlan);
   return async (dispatch, getState) => {
     try {
       const { migMeta } = getState();
@@ -196,6 +195,7 @@ const fetchNamespacesForCluster = clusterName => {
 };
 
 export default {
+  PvsDiscoveredType,
   fetchPlans,
   addPlan,
   removePlan,

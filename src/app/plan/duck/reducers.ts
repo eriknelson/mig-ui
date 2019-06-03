@@ -27,7 +27,13 @@ export const addPlanSuccess = (state = INITIAL_STATE, action) => {
       progress: 0,
     },
   };
-  const newPlan = { ...action.newPlan, planState: newPlanState };
+
+  //const newPlan = { ...action.newPlan, planState: newPlanState };
+
+  const newPlan = {
+    MigPlan: action.newPlan,
+    planState: newPlanState,
+  }
 
   return {
     ...state,
@@ -60,8 +66,14 @@ export const updatePlanProgress = (state = INITIAL_STATE, action) => {
 
 export const updatePlan = (state = INITIAL_STATE, action) => {
   const updatedPlanList = state.migPlanList.map(p => {
-    return p.metadata.name === action.updatedPlan.metadata.name ?
-      action.updatedPlan : p;
+    if(p.MigPlan.metadata.name === action.updatedPlan.metadata.name) {
+      return {
+        MigPlan: action.updatedPlan,
+        planState: p.planState,
+      }
+    } else {
+      return p;
+    }
   });
 
   return {

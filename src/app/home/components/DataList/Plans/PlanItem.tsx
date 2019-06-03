@@ -42,7 +42,7 @@ const PlanItem = ({ plan, planIndex, isLoading, ...props }) => {
                   <PlanStatusIcon status={plan.planState.status.state || 'N/A'} />
                 </Box>
                 <Box m="auto 0 auto 0">
-                  <span>{plan.metadata.name}</span>
+                  <span>{plan.MigPlan.metadata.name}</span>
                 </Box>
               </Flex>
             </DataListCell>,

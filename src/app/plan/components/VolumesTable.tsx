@@ -5,8 +5,8 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import Select from 'react-select';
 import { css } from '@emotion/core';
+import { connect } from 'react-redux';
 
-const options = [{ value: 'copy', label: 'copy' }, { value: 'move', label: 'move' }];
 interface IState {
   page: number;
   perPage: number;
@@ -17,6 +17,7 @@ interface IState {
 }
 interface IProps {
   values: any;
+  currentPlan: any;
 }
 
 class VolumesTable extends React.Component<any, any> {
@@ -44,8 +45,24 @@ class VolumesTable extends React.Component<any, any> {
   };
 
   render() {
-    const { values } = this.props;
+    const { values, currentPlan } = this.props;
     const { rows, selectedOption } = this.state;
+
+    console.log("here's the current plan: ", currentPlan);
+
+    const tableData = currentPlan.spec.persistentVolumes.map(v => {
+      return {
+        name: v.name,
+        project: '', 
+        storageClass: '',
+        size: '100 Gi',
+        claim: '',
+        type: 'copy',
+        details: '',
+        supportedActions: v.supportedActions,
+      }
+    })
+
     if (rows !== null) {
       return (
         <React.Fragment>
@@ -56,7 +73,7 @@ class VolumesTable extends React.Component<any, any> {
                 overflow: visible;
               }
             `}
-            data={values.persistentVolumes}
+            data={tableData}
             columns={[
               {
                 Header: () => (
@@ -150,7 +167,9 @@ class VolumesTable extends React.Component<any, any> {
                 Cell: row => (
                   <Select
                     onChange={(val: any) => this.handleTypeChange(row, val)}
-                    options={options}
+                    options={row.original.supportedActions.map(a => {
+                      return {value: a, label: a};
+                    })}
                     name="persistentVolumes"
                     value={{
                       label: row.original.type,
@@ -192,4 +211,13 @@ class VolumesTable extends React.Component<any, any> {
     }
   }
 }
-export default VolumesTable;
+
+const mapStateToProps = state => {
+  return {
+    plans: state.plan.migPlanList.map(p => p.MigPlan),
+  }
+}
+
+export default connect(
+  mapStateToProps, null,
+)(VolumesTable);

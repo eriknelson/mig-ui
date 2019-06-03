@@ -22,17 +22,19 @@ interface IProps {
 
 class VolumesTable extends React.Component<any, any> {
   handleTypeChange = (row, val) => {
+    console.log('handleTypeChange: ', val);
     const { persistentVolumes } = this.props.values;
-    const objIndex = persistentVolumes.findIndex(obj => obj.id === row.original.id);
+    const objIndex = persistentVolumes.findIndex(v => v.name === row.original.name);
 
-    const updatedObj = { ...persistentVolumes[objIndex], type: val.value };
+    const updatedPv = { ...persistentVolumes[objIndex], type: val.value };
 
-    const updatedData = [
+    const updatedPersistentVolumes = [
       ...persistentVolumes.slice(0, objIndex),
-      updatedObj,
+      updatedPv,
       ...persistentVolumes.slice(objIndex + 1),
     ];
-    this.props.setFieldValue('persistentVolumes', updatedData);
+    console.log('updating persistentVolumes values: ', updatedPersistentVolumes);
+    this.props.setFieldValue('persistentVolumes', updatedPersistentVolumes);
   };
   state = {
     page: 1,
@@ -44,24 +46,40 @@ class VolumesTable extends React.Component<any, any> {
     selectAll: false,
   };
 
+  getTableData() {
+    console.log('getTableData currentPlan: ', this.props.currentPlan);
+    console.log('getTableData values.persistentVolumes: ', this.props.values.persistentVolumes);
+    return this.props.currentPlan.spec.persistentVolumes.map(planVolume => {
+      let pvAction = 'copy';
+      if(this.props.values.persistentVolumes.length !== 0) {
+        const rowVal = this.props.values.persistentVolumes.find(v => v.name === planVolume.name);
+        pvAction = rowVal.type;
+      }
+
+      return {
+        name: planVolume.name,
+        project: '', 
+        storageClass: '',
+        size: '100 Gi',
+        claim: '',
+        type: pvAction,
+        details: '',
+        supportedActions: planVolume.supportedActions,
+      }
+    })
+  }
+
+  componentDidMount() {
+    this.props.setFieldValue('persistentVolumes', this.getTableData());
+  }
+
   render() {
     const { values, currentPlan } = this.props;
     const { rows, selectedOption } = this.state;
 
     console.log("here's the current plan: ", currentPlan);
 
-    const tableData = currentPlan.spec.persistentVolumes.map(v => {
-      return {
-        name: v.name,
-        project: '', 
-        storageClass: '',
-        size: '100 Gi',
-        claim: '',
-        type: 'copy',
-        details: '',
-        supportedActions: v.supportedActions,
-      }
-    })
+    const tableData = this.getTableData();
 
     if (rows !== null) {
       return (

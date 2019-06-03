@@ -206,28 +206,7 @@ const Wizard: any = withFormik({
     targetCluster: null,
     selectedNamespaces: [],
     selectedStorage: '',
-    persistentVolumes: [
-       {
-         name: 'pv007',
-         project: 'robot-shop',
-         storageClass: '',
-         size: '100 Gi',
-         claim: 'robot-shop/mongodata',
-         type: 'copy',
-         details: '',
-         id: 1,
-       },
-       {
-         name: 'pv097',
-         project: 'robot-shop',
-         storageClass: '',
-         size: '100 Gi',
-         claim: 'robot-shop/mysqldata',
-         type: 'copy',
-         details: '',
-         id: 2,
-       },
-    ],
+    persistentVolumes: [],
   }),
 
   validate: values => {
@@ -269,28 +248,7 @@ const mapStateToProps = state => {
     targetCluster: null,
     selectedNamespaces: [],
     selectedStorage: '',
-    //persistentVolumes: [
-       //{
-         //name: 'pv007',
-         //project: 'robot-shop',
-         //storageClass: '',
-         //size: '100 Gi',
-         //claim: 'robot-shop/mongodata',
-         //type: 'copy',
-         //details: '',
-         //id: 1,
-       //},
-       //{
-         //name: 'pv097',
-         //project: 'robot-shop',
-         //storageClass: '',
-         //size: '100 Gi',
-         //claim: 'robot-shop/mysqldata',
-         //type: 'copy',
-         //details: '',
-         //id: 2,
-       //},
-    //],
+    persistentVolumes: [],
   }
 }
 

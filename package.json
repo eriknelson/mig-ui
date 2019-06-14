@@ -10,6 +10,8 @@
     "lint": "tslint --config tslint.json 'src/**/*.{ts,tsx}'",
     "lint:fix": "tslint --config tslint.json --fix 'src/**/*.{ts,tsx}'",
     "build": "webpack --mode=production --config config/webpack.prod.js",
+    "image:build": "./scripts/build-image.sh",
+    "image:push": "./scripts/push-image.sh",
     "clean": "yarn rimraf dist",
     "start": "DEVMODE=local webpack-dev-server --hot --color --progress --info=true --config config/webpack.dev.js",
     "start:prod-server": "./scripts/prod-server.sh",

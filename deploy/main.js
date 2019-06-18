@@ -1,17 +1,18 @@
 const express = require('express');
-const readYaml = require('read-yaml');
+const fs = require('fs');
 
-const migMetaFile = process.env['MIGMETA_FILE'] || '/srv/migmeta.yaml';
+const migMetaFile = process.env['MIGMETA_FILE'] || '/srv/migmeta.json';
 const viewsDir = process.env['VIEWS_DIR'] || '/srv/views';
 const staticDir = process.env['STATIC_DIR'] || '/srv/static';
-const migMetaStr = JSON.stringify(readYaml.sync(migMetaFile));
-const encodedMigMeta = Buffer.from(migMetaStr).toString('base64');
+const migMetaStr = fs.readFileSync(migMetaFile, 'utf8')
 
 console.log('migMetaFile: ', migMetaFile);
 console.log('viewsDir: ', viewsDir);
 console.log('staticDir: ', staticDir);
 console.log('migMeta:');
 console.log(migMetaStr);
+
+const encodedMigMeta = Buffer.from(migMetaStr).toString('base64');
 
 const app = express();
 app.engine('ejs', require('ejs').renderFile);

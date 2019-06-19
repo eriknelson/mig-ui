@@ -25,6 +25,7 @@ class LoginComponent extends React.Component<IProps> {
   componentDidUpdate = prevProps => {
     const oauthMeta = this.props.auth.oauthMeta;
     const migMeta = this.props.migMeta;
+    //const oauthMeta = migMeta.oauth.wellKnown;
     const routerLoc = this.props.router.location;
 
     const freshOauthMeta = !prevProps.auth.oauthMeta && !!oauthMeta;
@@ -38,12 +39,12 @@ class LoginComponent extends React.Component<IProps> {
       // For now, using a temporarily hardcoded secret until PKCE can be
       // implemented. (migrations.openshift.io | base64)
       //
-      const loginSecret = 'bWlncmF0aW9ucy5vcGVuc2hpZnQuaW8K';
+      //const loginSecret = 'bWlncmF0aW9ucy5vcGVuc2hpZnQuaW8K';
       ////////////////////////////////////////////////////////////
 
       const clusterAuth = new ClientOAuth2({
         clientId: migMeta.oauth.clientId,
-        clientSecret: loginSecret, // See note above
+        clientSecret: migMeta.oauth.clientSecret,
         accessTokenUri: oauthMeta.token_endpoint,
         authorizationUri: oauthMeta.authorization_endpoint,
         redirectUri: migMeta.oauth.redirectUri,

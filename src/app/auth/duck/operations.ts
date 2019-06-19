@@ -11,10 +11,11 @@ const LS_KEY_CURRENT_USER = 'currentUser';
 const fetchOauthMeta = clusterApi => {
   const oauthMetaUrl = `${clusterApi}/.well-known/oauth-authorization-server`;
 
-  return async dispatch => {
+  return async (dispatch, getState) => {
     try {
-      const res = await axios.get(oauthMetaUrl);
-      dispatch(setOauthMeta(res.data));
+      //const res = await axios.get(oauthMetaUrl);
+      console.log('setting oauth meta from well known state');
+      dispatch(setOauthMeta(getState().migMeta.oauth.wellKnown));
     } catch (err) {
       dispatch(loginFailure());
       dispatch(commonOperations.alertErrorTimeout(err));
@@ -28,8 +29,8 @@ const fetchToken = (oauthClient, codeRedirect) => {
       const result = await oauthClient.code.getToken(codeRedirect);
       const user = result.data;
       localStorage.setItem(LS_KEY_CURRENT_USER, JSON.stringify(user));
-      dispatch(loginSuccess(user));
-      dispatch(push('/'));
+      //dispatch(loginSuccess(user));
+      //dispatch(push('/'));
     } catch (err) {
       dispatch(loginFailure());
       dispatch(commonOperations.alertErrorTimeout(err));

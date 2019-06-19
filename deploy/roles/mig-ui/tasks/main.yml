@@ -45,6 +45,10 @@
   debug:
     msg: "{{ mig_ui_oauth_redirect_url }}"
 
+- name: Generate random secret value for oauth client
+  set_fact:
+    mig_ui_oauth_secret: "{{ 99999999 | random | to_uuid | b64encode }}"
+
 - name: Include variables from migmeta.yml
   include_vars: migmeta.yaml
   delegate_to: localhost
@@ -54,6 +58,7 @@
     state: '{{ state }}'
     definition: "{{ lookup('template', item.name) | from_yaml }}"
   loop:
+    - name: mig-ui.oauthclient.yaml
     - name: mig-ui.configmap.yaml
     - name: mig-ui.service.yaml
     - name: mig-ui.deploymentconfig.yaml

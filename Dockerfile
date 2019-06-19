@@ -4,6 +4,5 @@ ADD public/favicon.ico /srv/staticroot
 ADD public/index.ejs /srv/staticroot
 ADD deploy/main.js /srv
 ADD node_modules /srv/node_modules
-ADD config/migmeta.yaml /etc
 ADD scripts/entrypoint.sh /usr/bin/entrypoint.sh
 ENTRYPOINT entrypoint.sh

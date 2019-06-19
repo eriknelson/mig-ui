@@ -8,3 +8,4 @@ mig_ui_migmeta_config:
     clientId: "{{ mig_ui_oauth_client_id }}"
     redirectUrl: "{{ mig_ui_oauth_redirect_url }}"
     userScope: "{{ mig_ui_oauth_user_scope }}"
+    clientSecret: "{{ mig_ui_oauth_secret }}"

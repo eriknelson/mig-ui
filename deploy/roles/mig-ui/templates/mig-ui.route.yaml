@@ -16,5 +16,3 @@ spec:
     name: {{ mig_ui_name }}
   port:
     targetPort: port-9000
-  tls:
-    termination: edge

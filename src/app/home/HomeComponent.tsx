@@ -28,6 +28,7 @@ import { BellIcon, CogIcon } from '@patternfly/react-icons';
 import { clusterOperations } from '../cluster/duck';
 import { storageOperations } from '../storage/duck';
 import { planOperations } from '../plan/duck';
+import { authOperations } from '../auth/duck';
 import DetailViewComponent from './DetailViewComponent';
 import DashboardCard from './components/Card/DashboardCard';
 import clusterSelectors from '../cluster/duck/selectors';
@@ -44,7 +45,7 @@ interface IProps {
   fetchPlans: () => void;
   fetchClusters: () => void;
   fetchStorage: () => void;
-  onLogout: () => void;
+  logout: () => void;
   isFetchingClusters: boolean;
   isFetchingStorage: boolean;
   isFetchingPlans: boolean;
@@ -109,12 +110,6 @@ class HomeComponent extends React.Component<IProps, IState> {
     </DropdownItem>,
   ];
 
-  userDropdownItems = [
-    <DropdownItem key="0" onClick={this.props.onLogout}>
-      Logout
-    </DropdownItem>,
-  ];
-
   componentDidMount = () => {
     this.props.fetchClusters();
     this.props.fetchStorage();
@@ -148,18 +143,7 @@ class HomeComponent extends React.Component<IProps, IState> {
       <Toolbar>
         <ToolbarGroup>
           <ToolbarItem>
-            <Dropdown
-              isPlain
-              position="right"
-              onSelect={this.onDropdownSelect}
-              isOpen={isDropdownOpen}
-              toggle={
-                <DropdownToggle onToggle={this.onDropdownToggle}>
-                  <div>jmatthews</div>
-                </DropdownToggle>
-              }
-              dropdownItems={this.userDropdownItems}
-            />
+            <Button variant="link" isInline onClick={() => this.props.logout()}>Logout</Button>
           </ToolbarItem>
         </ToolbarGroup>
       </Toolbar>
@@ -271,7 +255,7 @@ export default connect(
     isPlanError: state.plan.isError,
   }),
   dispatch => ({
-    onLogout: () => console.debug('TODO: IMPLEMENT: user logged out.'),
+    logout: () => dispatch(authOperations.logoutUser()),
     fetchClusters: () => dispatch(clusterOperations.fetchClusters()),
     fetchStorage: () => dispatch(storageOperations.fetchStorage()),
     fetchPlans: () => dispatch(planOperations.fetchPlans()),

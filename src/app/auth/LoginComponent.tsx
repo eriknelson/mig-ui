@@ -13,6 +13,7 @@ interface IProps {
 
 class LoginComponent extends React.Component<IProps> {
   componentDidMount = () => {
+    console.log('componentDidMount');
     const oauthMeta = this.props.auth.oauthMeta;
     const migMeta = this.props.migMeta;
 
@@ -20,44 +21,56 @@ class LoginComponent extends React.Component<IProps> {
       this.props.fetchOauthMeta(migMeta.clusterApi);
       return;
     }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const shouldRefresh = urlParams.get('action') === 'refresh';
+    if(shouldRefresh) {
+      console.log('handling login from component did mount')
+      this.handleLogin();
+    }
   };
 
   componentDidUpdate = prevProps => {
     const oauthMeta = this.props.auth.oauthMeta;
     const migMeta = this.props.migMeta;
-    const routerLoc = this.props.router.location;
 
     const freshOauthMeta = !prevProps.auth.oauthMeta && !!oauthMeta;
-    const urlParams = new URLSearchParams(window.location.search);
-    const shouldRefresh = urlParams.get('action') === 'refresh';
-    const handleLogin = freshOauthMeta || shouldRefresh;
 
-    if (handleLogin) {
-      const clusterAuth = new ClientOAuth2({
-        clientId: migMeta.oauth.clientId,
-        clientSecret: migMeta.oauth.clientSecret,
-        accessTokenUri: oauthMeta.token_endpoint,
-        authorizationUri: oauthMeta.authorization_endpoint,
-        redirectUri: migMeta.oauth.redirectUri,
-        scopes: [migMeta.oauth.userScope],
-      });
-
-      switch (routerLoc.pathname) {
-        case '/login': {
-          const uri = clusterAuth.code.getUri();
-          window.location.replace(uri);
-          break;
-        }
-        case '/login/callback': {
-          this.props.fetchToken(clusterAuth, window.location.href);
-          break;
-        }
-        default: {
-          return;
-        }
-      }
+    if (freshOauthMeta) {
+      console.log('fresh oauth meta');
+      this.handleLogin()
     }
   };
+
+  handleLogin = () => {
+    const oauthMeta = this.props.auth.oauthMeta;
+    const migMeta = this.props.migMeta;
+    const routerLoc = this.props.router.location;
+
+    const clusterAuth = new ClientOAuth2({
+      clientId: migMeta.oauth.clientId,
+      clientSecret: migMeta.oauth.clientSecret,
+      accessTokenUri: oauthMeta.token_endpoint,
+      authorizationUri: oauthMeta.authorization_endpoint,
+      redirectUri: migMeta.oauth.redirectUri,
+      scopes: [migMeta.oauth.userScope],
+    });
+
+    switch (routerLoc.pathname) {
+      case '/login': {
+        const uri = clusterAuth.code.getUri();
+        window.location.replace(uri);
+        break;
+      }
+      case '/login/callback': {
+        this.props.fetchToken(clusterAuth, window.location.href);
+        break;
+      }
+      default: {
+        return;
+      }
+    }
+  }
 
   render() {
     return <div />;

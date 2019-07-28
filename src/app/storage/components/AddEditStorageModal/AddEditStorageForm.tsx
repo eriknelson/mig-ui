@@ -17,7 +17,7 @@ import {
 
 
 const nameKey = 'name';
-const bucketNameKey = 'bucketNameKey';
+const bucketNameKey = 'bucketName';
 const bucketRegionKey = 'bucketRegion';
 const accessKeyKey = 'accessKey';
 const secretKey = 'secret';
@@ -57,7 +57,7 @@ const InnerAddEditStorageForm = ({
   }
 
   return (
-    <Form onSubmit={props.onSubmit} style={{ marginTop: '24px' }}>
+    <Form onSubmit={props.handleSubmit} style={{ marginTop: '24px' }}>
       <FormGroup label="Repository Name" isRequired fieldId={nameKey}>
         <TextInput
           onChange={formikHandleChange}

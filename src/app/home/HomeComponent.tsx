@@ -42,7 +42,6 @@ interface IProps {
   allPlans: any[];
   fetchPlans: () => void;
   fetchClusters: () => void;
-  fetchStorage: () => void;
   startStoragePolling: (params) => void;
   stopStoragePolling: () => void;
   startClusterPolling: (params) => void;
@@ -295,7 +294,6 @@ export default connect(
   dispatch => ({
     onLogout: () => console.debug('TODO: IMPLEMENT: user logged out.'),
     fetchClusters: () => dispatch(clusterOperations.fetchClusters()),
-    fetchStorage: () => dispatch(storageOperations.fetchStorage()),
     fetchPlans: () => dispatch(planOperations.fetchPlans()),
     startStoragePolling: params => dispatch(startStoragePolling(params)),
     stopStoragePolling: () => dispatch(stopStoragePolling()),

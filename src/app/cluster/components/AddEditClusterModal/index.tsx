@@ -1,6 +1,8 @@
-import React, { useEffect, useContext } from 'react';
+/** @jsx jsx */
+import { jsx } from '@emotion/core';
+import { useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
-import AddClusterForm from './AddEditClusterForm';
+import AddEditClusterForm from './AddEditClusterForm';
 import { Modal } from '@patternfly/react-core';
 import { Creators } from '../../duck/actions';
 import {
@@ -39,7 +41,7 @@ const AddEditClusterModal = ({
     if(isOpen && isPolling) {
       pollingContext.stopAllPolling();
     }
-  })
+  });
 
   const onClose = () => {
     props.cancelAddEditWatch();
@@ -50,7 +52,7 @@ const AddEditClusterModal = ({
 
   return (
     <Modal isSmall isOpen={isOpen} onClose={onClose} title="Cluster">
-      <AddClusterForm
+      <AddEditClusterForm
         onAddEditSubmit={onAddEditSubmit}
         onClose={onClose}
         addEditStatus={addEditStatus}

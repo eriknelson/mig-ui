@@ -1,60 +1,74 @@
-import React from 'react';
+/** @jsx jsx */
+import { jsx } from '@emotion/core';
+import { useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
-import AddStorageForm from './AddEditStorageForm';
-import { storageOperations } from '../../duck';
+import AddEditStorageForm from './AddEditStorageForm';
 import { Creators } from '../../duck/actions';
-import ConnectionState from '../../../common/connection_state';
 import { Modal } from '@patternfly/react-core';
+import { PollingContext } from '../../../home/duck/context';
+import { AddEditMode } from '../../../common/add_edit_state';
 
-class AddStorageModal extends React.Component<any, any> {
-  componentDidMount() {
-    this.props.resetConnectionState();
+const AddEditStorageModal = ({
+  addEditStatus,
+  initialStorageValues,
+  isOpen,
+  isPolling,
+  ...props
+}) => {
+  const pollingContext = useContext(PollingContext);
+  const onAddEditSubmit = (storageValues) => {
+    switch(addEditStatus.mode) {
+      case AddEditMode.Edit: {
+        props.updateStorage(storageValues);
+        break;
+      }
+      case AddEditMode.Add: {
+        props.addStorage(storageValues);
+        break;
+      }
+      default: {
+        console.warn(
+          `onAddEditSubmit, but unknown mode was found: ${addEditStatus.mode}. Ignoring.`, );
+      }
+    }
   }
-  handleClose = () => {
-    this.props.onHandleClose();
-    this.props.resetConnectionState();
-  };
 
-  handleAdd = vals => {
-    this.props.addStorage(vals);
-  };
+  useEffect(() => {
+    if(isOpen && isPolling) {
+      pollingContext.stopAllPolling();
+    }
+  });
 
-  handleUpdate = vals => {
-    this.props.updateStorage(vals);
+  const onClose = () => {
+    props.cancelAddEditWatch();
+    props.resetAddEditState();
+    props.onHandleClose();
+    pollingContext.startAllDefaultPolling();
   }
 
-  render() {
-    const { connectionState, checkConnection, name, bucketName, bucketRegion, accessKey, secret, mode } = this.props;
-
-    return (
-      <Modal isSmall isOpen={this.props.isOpen} onClose={this.handleClose} title="Repository">
-        <AddStorageForm
-          connectionState={connectionState}
-          onHandleModalToggle={this.handleClose}
-          onItemSubmit={ (mode === 'update') ? this.handleUpdate : this.handleAdd}
-          checkConnection={checkConnection}
-          name={name}
-          bucketName={bucketName}
-          bucketRegion={bucketRegion}
-          accessKey={accessKey}
-          secret={secret}
-          mode={mode}
-        />
-      </Modal>
-    );
-  }
+  return (
+    <Modal isSmall isOpen={isOpen} onClose={onClose} title="Repository">
+      <AddEditStorageForm
+        onAddEditSubmit={onAddEditSubmit}
+        onClose={onClose}
+        addEditStatus={addEditStatus}
+        initialStorageValues={initialStorageValues}
+      />
+    </Modal>
+  )
 }
 
 export default connect(
   state => {
     return {
-      connectionState: state.storage.connectionState,
+      addEditStatus: state.storage.addEditStatus,
+      isPolling: state.storage.isPolling,
     };
   },
   dispatch => ({
-    addStorage: values => dispatch(storageOperations.addStorage(values)),
-    updateStorage: values => dispatch(storageOperations.updateStorage(values)),
-    checkConnection: () => dispatch(storageOperations.checkConnection()),
-    resetConnectionState: () => dispatch(Creators.setConnectionState(ConnectionState.Pending)),
+    addStorage: storageValues => console.log('addStorage: ', storageValues),
+    updateStorage: updatedStorageValues => console.log('updateStorage: ', updatedStorageValues),
+    cancelAddEditWatch: () => console.log('cancelAddEditWatch'),
+    resetAddEditState: () => console.log('resetAddEditState'),
   })
-)(AddStorageModal);
+)(AddEditStorageModal);

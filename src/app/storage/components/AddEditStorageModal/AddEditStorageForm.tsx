@@ -22,6 +22,11 @@ const bucketRegionKey = 'bucketRegion';
 const accessKeyKey = 'accessKey';
 const secretKey = 'secret';
 
+const componentTypeStr = 'repository';
+const currentStatusFn = addEditStatusText(componentTypeStr);
+const addEditButtonTextFn = addEditButtonText(componentTypeStr);
+
+
 const InnerAddEditStorageForm = ({
   values,
   touched,
@@ -41,7 +46,7 @@ const InnerAddEditStorageForm = ({
   const handleSecretHiddenToggle = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsAccessKeyHidden(!isSecretHidden);
+    setIsSecretHidden(!isSecretHidden);
   }
 
   const formikHandleChange = (_val, e) => props.handleChange(e);
@@ -134,14 +139,23 @@ const InnerAddEditStorageForm = ({
           <FormErrorDiv id="feedback-secret-key">{errors.secret}</FormErrorDiv>
         )}
       </FormGroup>
-      <Button onClick={() => console.log('hello world')}>Debug button</Button>
+      <Button type="submit"
+        isDisabled={isAddEditButtonDisabled(currentStatus, errors, touched)}
+      >
+        {addEditButtonTextFn(currentStatus)}
+      </Button>
+      <h3>Status:</h3>
+      <div>{currentStatusFn(currentStatus)}</div>
+      <Button variant="primary" onClick={onClose}>
+        Close
+      </Button>
     </Form>
   )
 }
 
 const AddEditStorageForm: any = withFormik({
-  mapPropsToValues: ({initialClusterValues}) => {
-    const v = initialClusterValues;
+  mapPropsToValues: ({initialStorageValues}) => {
+    const v = initialStorageValues;
     return {
       name: v ? v.name : '',
       bucketName: v ? v.bucketName : '',

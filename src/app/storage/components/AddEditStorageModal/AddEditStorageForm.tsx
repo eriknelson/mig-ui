@@ -1,10 +1,9 @@
 import React from 'react';
 import { withFormik } from 'formik';
-import { TextInput, Form, FormGroup } from '@patternfly/react-core';
-import FormErrorDiv from './../../../common/components/FormErrorDiv';
+import { Button, TextInput, Form, FormGroup } from '@patternfly/react-core';
+import FormErrorDiv from '../../../common/components/FormErrorDiv';
 import KeyDisplayIcon from '../../../common/components/KeyDisplayIcon';
 import HideWrapper from '../../../common/components/HideWrapper';
-import CheckConnection from './../../../common/components/CheckConnection';
 import utils from '../../../common/duck/utils';
 import storageUtils from '../../duck/utils';
 
@@ -47,8 +46,6 @@ class WrappedAddStorageForm extends React.Component<any, any> {
       handleBlur,
       handleSubmit,
       setFieldTouched,
-      connectionState,
-      checkConnection,
       mode,
     } = this.props;
     console.error(values);
@@ -137,14 +134,7 @@ class WrappedAddStorageForm extends React.Component<any, any> {
             <FormErrorDiv id="feedback-secret-key">{errors.secret}</FormErrorDiv>
           )}
         </FormGroup>
-        <CheckConnection
-          errors={errors}
-          touched={touched}
-          connectionState={connectionState}
-          checkConnection={checkConnection}
-          onHandleModalToggle={this.props.onHandleModalToggle}
-          mode={mode}
-        />
+        <Button onClick={() => console.log('hello world')}>Debug button</Button>
       </Form>
     );
   }

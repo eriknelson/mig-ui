@@ -8,7 +8,7 @@ import {
   DataListItemRow,
 } from '@patternfly/react-core';
 import StatusIcon from '../../../../common/components/StatusIcon';
-import AddStorageModal from '../../../../storage/components/AddStorageModal';
+import AddStorageModal from '../../../../storage/components/AddEditStorageModal';
 import { LinkIcon } from '@patternfly/react-icons';
 import { useOpenModal } from '../../../duck/hooks';
 import ConfirmModal from '../../../../common/components/ConfirmModal';

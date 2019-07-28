@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import AddStorageForm from './AddStorageForm';
+import AddStorageForm from './AddEditStorageForm';
 import { storageOperations } from '../../duck';
 import { Creators } from '../../duck/actions';
 import ConnectionState from '../../../common/connection_state';

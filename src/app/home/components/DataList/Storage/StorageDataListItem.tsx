@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { useExpandDataList, useOpenModal } from '../../../duck/hooks';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-import AddStorageModal from '../../../../storage/components/AddStorageModal';
+import AddStorageModal from '../../../../storage/components/AddEditStorageModal';
 import StorageContent from './StorageContent';
 
 const StorageDataListItem = ({ dataList, isLoading, associatedPlans, removeStorage, ...props }) => {

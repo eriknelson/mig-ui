@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import StorageItem from './StorageItem';
 import { Flex, Box } from '@rebass/emotion';
-import AddStorageModal from '../../../../storage/components/AddStorageModal';
+import AddStorageModal from '../../../../storage/components/AddEditStorageModal';
 import {
   DataList,
   DataListContent,

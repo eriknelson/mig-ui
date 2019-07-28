@@ -32,7 +32,7 @@ class WrappedAddStorageForm extends React.Component<any, any> {
     }
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (prevProps.connectionState !== this.props.connectionState) {
       this.props.setFieldValue('connectionStatus', this.props.connectionState);
     }

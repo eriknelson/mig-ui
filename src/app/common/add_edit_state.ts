@@ -87,3 +87,14 @@ export const addEditButtonText = (componentType: string) => (status: AddEditStat
     }
   }
 }
+
+export const isAddEditButtonDisabled = (
+  status: AddEditStatus, errors: object, touched: object
+) => {
+  const hasNotBeenTouched = Object.keys(touched).length === 0;
+  const hasValidationErrors = Object.keys(errors).length > 0;
+  const valuesAreNotReady = hasNotBeenTouched || hasValidationErrors;
+  const isDisabled = valuesAreNotReady ||
+    status.state === AddEditState.Watching;
+  return isDisabled;
+}

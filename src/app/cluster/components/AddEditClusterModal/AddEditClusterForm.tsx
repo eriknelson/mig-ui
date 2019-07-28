@@ -13,6 +13,7 @@ import {
   AddEditMode,
   addEditStatusText,
   addEditButtonText,
+  isAddEditButtonDisabled,
 } from '../../../common/add_edit_state';
 
 const nameKey = 'name';
@@ -22,15 +23,6 @@ const tokenKey = 'token';
 const componentTypeStr = 'cluster';
 const currentStatusFn = addEditStatusText(componentTypeStr);
 const addEditButtonTextFn = addEditButtonText(componentTypeStr);
-
-const isAddEditButtonDisabled = (props, errors, touched) => {
-  const hasNotBeenTouched = Object.keys(touched).length === 0;
-  const hasValidationErrors = Object.keys(errors).length > 0;
-  const valuesAreNotReady = hasNotBeenTouched || hasValidationErrors;
-  const isDisabled = valuesAreNotReady ||
-    props.addEditStatus.state === AddEditState.Watching;
-  return isDisabled;
-}
 
 const InnerAddClusterForm = ({
   values,
@@ -100,7 +92,9 @@ const InnerAddClusterForm = ({
           <FormErrorDiv id="feedback-token">{errors.token}</FormErrorDiv>
         )}
       </FormGroup>
-      <Button type="submit" isDisabled={isAddEditButtonDisabled(props, errors, touched)}>
+      <Button type="submit"
+        isDisabled={isAddEditButtonDisabled(currentStatus, errors, touched)}
+      >
         {addEditButtonTextFn(currentStatus)}
       </Button>
       <h3>Status:</h3>

@@ -1,4 +1,6 @@
-import React from 'react';
+/** @jsx jsx */
+import { jsx } from '@emotion/core';
+import { useState } from 'react';
 import { withFormik } from 'formik';
 import { Button, TextInput, Form, FormGroup } from '@patternfly/react-core';
 import FormErrorDiv from '../../../common/components/FormErrorDiv';
@@ -6,141 +8,140 @@ import KeyDisplayIcon from '../../../common/components/KeyDisplayIcon';
 import HideWrapper from '../../../common/components/HideWrapper';
 import utils from '../../../common/duck/utils';
 import storageUtils from '../../duck/utils';
+import {
+  AddEditState,
+  AddEditStatus,
+  AddEditMode,
+  addEditStatusText,
+  addEditButtonText,
+  isAddEditButtonDisabled,
+} from '../../../common/add_edit_state';
 
-class WrappedAddStorageForm extends React.Component<any, any> {
-  state = {
-    accessKeyHidden: true,
-    secretHidden: true,
-  };
 
-  onHandleChange = (e) => {
-    this.props.handleChange(e);
-  };
+const nameKey = 'name';
+const bucketNameKey = 'bucketNameKey';
+const bucketRegionKey = 'bucketRegion';
+const accessKeyKey = 'accessKey';
+const secretKey = 'secret';
 
-  handleKeyToggle = (keyName, e) => {
+const InnerAddEditStorageForm = ({
+  values,
+  touched,
+  errors,
+  ...props
+}) => {
+  // Formik doesn't like addEditStatus destructured in the signature for some reason
+  const currentStatus = props.addEditStatus;
+
+  const [ isAccessKeyHidden, setIsAccessKeyHidden ] = useState(true);
+  const handleAccessKeyHiddenToggle = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (keyName === 'accessKey') {
-      this.setState({
-        accessKeyHidden: !this.state.accessKeyHidden,
-      });
-    }
-    if (keyName === 'secret') {
-      this.setState({
-        secretHidden: !this.state.secretHidden,
-      });
-    }
-  };
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.connectionState !== this.props.connectionState) {
-      this.props.setFieldValue('connectionStatus', this.props.connectionState);
-    }
+    setIsAccessKeyHidden(!isAccessKeyHidden);
+  }
+  const [ isSecretHidden, setIsSecretHidden ] = useState(true);
+  const handleSecretHiddenToggle = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsAccessKeyHidden(!isSecretHidden);
   }
 
-  render() {
-    const {
-      values,
-      touched,
-      errors,
-      handleBlur,
-      handleSubmit,
-      setFieldTouched,
-      mode,
-    } = this.props;
-    console.error(values);
-    return (
-      <Form onSubmit={handleSubmit} style={{ marginTop: '24px' }}>
-        <FormGroup label="Repository Name" isRequired fieldId="name">
-          <TextInput
-            onChange={(_val, e) => this.onHandleChange(e)}
-            onInput={() => setFieldTouched('name', true, true)}
-            onBlur={handleBlur}
-            value={values.name}
-            name="name"
-            type="text"
-            id="repoName"
-            isDisabled = { (mode === 'update') ? true : false }
-          />
-          {errors.name && touched.name && (
-            <FormErrorDiv id="feedback-name">{errors.name}</FormErrorDiv>
-          )}
-        </FormGroup>
-        <FormGroup label="S3 Bucket Name" isRequired fieldId="bucketName">
-          <TextInput
-            onChange={(_val, e) => this.onHandleChange(e)}
-            onInput={() => setFieldTouched('bucketName', true, true)}
-            onBlur={handleBlur}
-            value={values.bucketName}
-            name="bucketName"
-            type="text"
-            id="bucketName"
-          />
-          {errors.bucketName && touched.bucketName && (
-            <FormErrorDiv id="feedback-bucket-name">{errors.bucketName}</FormErrorDiv>
-          )}
-        </FormGroup>
+  const formikHandleChange = (_val, e) => props.handleChange(e);
+  const formikSetFieldTouched = key => () => props.setFieldTouched(key, true, true);
 
-        <FormGroup label="S3 Bucket Region" isRequired fieldId="bucketRegion">
-          <TextInput
-            onChange={(_val, e) => this.onHandleChange(e)}
-            onInput={() => setFieldTouched('bucketRegion', true, true)}
-            onBlur={handleBlur}
-            value={values.bucketRegion}
-            name="bucketRegion"
-            type="text"
-            id="bucketRegion"
-          />
-          {errors.bucketRegion && touched.bucketRegion && (
-            <FormErrorDiv id="feedback-bucket-name">{errors.bucketName}</FormErrorDiv>
-          )}
-        </FormGroup>
-
-        <FormGroup label="S3 Provider Access Key" isRequired fieldId="s3-provider-access-key">
-          <HideWrapper onClick={e => this.handleKeyToggle('accessKey', e)}>
-            <KeyDisplayIcon id="accessKeyIcon" isHidden={this.state.accessKeyHidden} />
-          </HideWrapper>
-          <TextInput
-            onChange={(_val, e) => this.onHandleChange(e)}
-            onInput={() => setFieldTouched('accessKey', true, true)}
-            onBlur={handleBlur}
-            value={values.accessKey}
-            name="accessKey"
-            type={this.state.accessKeyHidden ? 'password' : 'text'}
-            id="accessKey"
-          />
-          {errors.accessKey && touched.accessKey && (
-            <FormErrorDiv id="feedback-access-key">{errors.accessKey}</FormErrorDiv>
-          )}
-        </FormGroup>
-        <FormGroup
-          label="S3 Provider Secret Access Key"
-          isRequired
-          fieldId="s3-provider-secret-access-key"
-        >
-          <HideWrapper onClick={e => this.handleKeyToggle('secret', e)}>
-            <KeyDisplayIcon id="accessKeyIcon" isHidden={this.state.secretHidden} />
-          </HideWrapper>
-          <TextInput
-            onChange={(_val, e) => this.onHandleChange(e)}
-            onInput={() => setFieldTouched('secret', true, true)}
-            onBlur={handleBlur}
-            value={values.secret}
-            name="secret"
-            type={this.state.secretHidden ? 'password' : 'text'}
-            id="secret"
-          />
-          {errors.secret && touched.secret && (
-            <FormErrorDiv id="feedback-secret-key">{errors.secret}</FormErrorDiv>
-          )}
-        </FormGroup>
-        <Button onClick={() => console.log('hello world')}>Debug button</Button>
-      </Form>
-    );
+  const onClose = () => {
+    props.onClose();
   }
+
+  return (
+    <Form onSubmit={props.onSubmit} style={{ marginTop: '24px' }}>
+      <FormGroup label="Repository Name" isRequired fieldId={nameKey}>
+        <TextInput
+          onChange={formikHandleChange}
+          onInput={formikSetFieldTouched(nameKey)}
+          onBlur={props.handleBlur}
+          value={values.name}
+          name={nameKey}
+          type="text"
+          id="storage-name-input"
+          isDisabled = { currentStatus === AddEditMode.Edit }
+        />
+        {errors.name && touched.name && (
+          <FormErrorDiv id="feedback-name">{errors.name}</FormErrorDiv>
+        )}
+      </FormGroup>
+      <FormGroup label="S3 Bucket Name" isRequired fieldId={bucketNameKey}>
+        <TextInput
+          onChange={formikHandleChange}
+          onInput={formikSetFieldTouched(bucketNameKey)}
+          onBlur={props.handleBlur}
+          value={values.bucketName}
+          name={bucketNameKey}
+          type="text"
+          id="storage-bucket-name-input"
+        />
+        {errors.bucketName && touched.bucketName && (
+          <FormErrorDiv id="feedback-bucket-name">{errors.bucketName}</FormErrorDiv>
+        )}
+      </FormGroup>
+      <FormGroup label="S3 Bucket Region" isRequired fieldId={bucketRegionKey}>
+        <TextInput
+          onChange={formikHandleChange}
+          onInput={formikSetFieldTouched(bucketRegionKey)}
+          onBlur={props.handleBlur}
+          value={values.bucketRegion}
+          name={bucketRegionKey}
+          type="text"
+          id="storage-bucket-region-input"
+        />
+        {errors.bucketRegion && touched.bucketRegion && (
+          <FormErrorDiv id="feedback-bucket-name">{errors.bucketName}</FormErrorDiv>
+        )}
+      </FormGroup>
+      <FormGroup label="S3 Provider Access Key" isRequired fieldId={accessKeyKey}>
+        <HideWrapper onClick={handleAccessKeyHiddenToggle}>
+          <KeyDisplayIcon id="accessKeyIcon" isHidden={isAccessKeyHidden} />
+        </HideWrapper>
+        <TextInput
+          onChange={formikHandleChange}
+          onInput={formikSetFieldTouched(accessKeyKey)}
+          onBlur={props.handleBlur}
+          value={values.accessKey}
+          name={accessKeyKey}
+          type={isAccessKeyHidden ? 'password' : 'text'}
+          id="storage-access-key-input"
+        />
+        {errors.accessKey && touched.accessKey && (
+          <FormErrorDiv id="feedback-access-key">{errors.accessKey}</FormErrorDiv>
+        )}
+      </FormGroup>
+      <FormGroup
+        label="S3 Provider Secret Access Key"
+        isRequired
+        fieldId={secretKey}
+      >
+        <HideWrapper onClick={handleSecretHiddenToggle}>
+          <KeyDisplayIcon id="accessKeyIcon" isHidden={isSecretHidden} />
+        </HideWrapper>
+        <TextInput
+          onChange={formikHandleChange}
+          onInput={formikSetFieldTouched(secretKey)}
+          onBlur={props.handleBlur}
+          value={values.secret}
+          name={secretKey}
+          type={isSecretHidden ? 'password' : 'text'}
+          id="storage-secret-input"
+        />
+        {errors.secret && touched.secret && (
+          <FormErrorDiv id="feedback-secret-key">{errors.secret}</FormErrorDiv>
+        )}
+      </FormGroup>
+      <Button onClick={() => console.log('hello world')}>Debug button</Button>
+    </Form>
+  )
 }
 
-const AddStorageForm: any = withFormik({
+const AddEditStorageForm: any = withFormik({
   mapPropsToValues: ({name, bucketName, bucketRegion, accessKey, secret}) => ({
     name: name || '',
     bucketName: bucketName || '',
@@ -186,8 +187,6 @@ const AddStorageForm: any = withFormik({
     formikBag.props.onHandleModalToggle();
     formikBag.props.onItemSubmit(values);
   },
+})(InnerAddEditStorageForm);
 
-  displayName: 'Add Respository Form',
-})(WrappedAddStorageForm);
-
-export default AddStorageForm;
+export default AddEditStorageForm;

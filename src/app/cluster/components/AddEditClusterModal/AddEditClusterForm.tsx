@@ -24,7 +24,7 @@ const componentTypeStr = 'cluster';
 const currentStatusFn = addEditStatusText(componentTypeStr);
 const addEditButtonTextFn = addEditButtonText(componentTypeStr);
 
-const InnerAddClusterForm = ({
+const InnerAddEditClusterForm = ({
   values,
   touched,
   errors,
@@ -141,6 +141,6 @@ const AddClusterForm: any = withFormik({
     // Manually trigger formik submit
     formikBag.props.onAddEditSubmit(values);
   },
-})(InnerAddClusterForm);
+})(InnerAddEditClusterForm);
 
 export default AddClusterForm;

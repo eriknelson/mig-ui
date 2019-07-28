@@ -7,35 +7,19 @@ import KeyDisplayIcon from '../../../common/components/KeyDisplayIcon';
 import FormErrorDiv from '../../../common/components/FormErrorDiv';
 import HideWrapper from '../../../common/components/HideWrapper';
 import utils from '../../../common/duck/utils';
-import { AddEditState, AddEditStatus, AddEditMode } from '../../../common/add_edit_state';
+import {
+  AddEditState,
+  AddEditStatus,
+  AddEditMode,
+  addEditStatusStr,
+} from '../../../common/add_edit_state';
 
 const nameKey = 'name';
 const urlKey = 'url';
 const tokenKey = 'token';
 
-const currentStatus = (props) => {
-  const addEditStatus: AddEditStatus = props.addEditStatus;
-  switch(addEditStatus.state) {
-    case AddEditState.Pending: {
-      return `Ready to create a cluster`;
-    }
-    case AddEditState.Critical: {
-      return `Connection failed: ${addEditStatus.message} | ${addEditStatus.reason}`;
-    }
-    case AddEditState.Ready: {
-      return `Connection successful`;
-    }
-    case AddEditState.Watching: {
-      return `Validating connection...`;
-    }
-    case AddEditState.TimedOut: {
-      return `Validation timed out, double check your inputs and try again?`
-    }
-    default: {
-      return `AddEditStatus fell into an unknown state`;
-    }
-  }
-}
+const componentTypeStr = 'cluster';
+const currentStatusFn = addEditStatusStr(componentTypeStr);
 
 const addEditButtonText = (props) => {
   const { state } = props.addEditStatus;
@@ -68,7 +52,7 @@ const InnerAddClusterForm = ({
   ...props
 }) => {
   // Formik doesn't like addEditStatus destructured in the signature for some reason
-  const status = props.addEditStatus;
+  const currentStatus = props.addEditStatus;
 
   const [isTokenHidden, setIsTokenHidden ] = useState(true);
   const toggleHideToken = e => {
@@ -94,7 +78,7 @@ const InnerAddClusterForm = ({
           name={nameKey}
           type="text"
           id="cluster-name-input"
-          isDisabled={status.mode === AddEditMode.Edit}
+          isDisabled={currentStatus.mode === AddEditMode.Edit}
         />
         {errors.name && touched.name && (
           <FormErrorDiv id="feedback-name">{errors.name}</FormErrorDiv>
@@ -133,7 +117,7 @@ const InnerAddClusterForm = ({
         {addEditButtonText(props)}
       </Button>
       <h3>Status:</h3>
-      <div>{currentStatus(props)}</div>
+      <div>{currentStatusFn(currentStatus)}</div>
       <Button variant="primary" onClick={onClose}>
         Close
       </Button>

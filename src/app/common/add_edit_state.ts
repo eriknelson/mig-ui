@@ -50,3 +50,26 @@ export const AddEditWatchTimeout = addEditTimeoutSeconds * 1000;
 
 const addEditPollIntervalSeconds = 4;
 export const AddEditWatchTimeoutPollInterval = addEditPollIntervalSeconds * 1000;
+
+export const addEditStatusStr = (componentType: string) => (status: AddEditStatus) => {
+  switch(status.state) {
+    case AddEditState.Pending: {
+      return `Ready to create a ${componentType}`;
+    }
+    case AddEditState.Critical: {
+      return `Connection failed: ${status.message} | ${status.reason}`;
+    }
+    case AddEditState.Ready: {
+      return `Connection successful`;
+    }
+    case AddEditState.Watching: {
+      return `Validating connection...`;
+    }
+    case AddEditState.TimedOut: {
+      return `Validation timed out, double check your inputs and try again?`
+    }
+    default: {
+      return `AddEditStatus fell into an unknown state`;
+    }
+  }
+}

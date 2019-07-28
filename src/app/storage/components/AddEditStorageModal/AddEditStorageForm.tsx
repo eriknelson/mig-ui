@@ -9,8 +9,6 @@ import HideWrapper from '../../../common/components/HideWrapper';
 import utils from '../../../common/duck/utils';
 import storageUtils from '../../duck/utils';
 import {
-  AddEditState,
-  AddEditStatus,
   AddEditMode,
   addEditStatusText,
   addEditButtonText,
@@ -142,14 +140,16 @@ const InnerAddEditStorageForm = ({
 }
 
 const AddEditStorageForm: any = withFormik({
-  mapPropsToValues: ({name, bucketName, bucketRegion, accessKey, secret}) => ({
-    name: name || '',
-    bucketName: bucketName || '',
-    bucketRegion: bucketRegion || '',
-    accessKey: accessKey || '',
-    secret: secret || '',
-    connectionStatus: '',
-  }),
+  mapPropsToValues: ({initialClusterValues}) => {
+    const v = initialClusterValues;
+    return {
+      name: v ? v.name : '',
+      bucketName: v ? v.bucketName : '',
+      bucketRegion: v ? v.bucketRegion: '',
+      accessKey: v ? v.accessKey: '',
+      secret: v ? v.secret: '',
+    };
+  },
 
   validate: (values: any)  => {
     const errors: any = {};
@@ -183,9 +183,9 @@ const AddEditStorageForm: any = withFormik({
   },
 
   handleSubmit: (values, formikBag: any) => {
+    // Formik will set isSubmitting to true, so we need to flip this back off
     formikBag.setSubmitting(false);
-    formikBag.props.onHandleModalToggle();
-    formikBag.props.onItemSubmit(values);
+    formikBag.props.onAddEditSubmit(values);
   },
 })(InnerAddEditStorageForm);
 

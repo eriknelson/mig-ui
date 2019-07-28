@@ -8,8 +8,6 @@ import FormErrorDiv from '../../../common/components/FormErrorDiv';
 import HideWrapper from '../../../common/components/HideWrapper';
 import utils from '../../../common/duck/utils';
 import {
-  AddEditState,
-  AddEditStatus,
   AddEditMode,
   addEditStatusText,
   addEditButtonText,
@@ -107,11 +105,14 @@ const InnerAddEditClusterForm = ({
 }
 
 const AddClusterForm: any = withFormik({
-  mapPropsToValues: ({initialClusterValues}) => ({
-    name: initialClusterValues ? initialClusterValues.clusterName : '',
-    url: initialClusterValues ? initialClusterValues.clusterUrl : '',
-    token: initialClusterValues ? initialClusterValues.clusterSvcToken: '',
-  }),
+  mapPropsToValues: ({initialClusterValues}) => {
+    const v = initialClusterValues;
+    return {
+      name: v ? v.clusterName : '',
+      url: v ? v.clusterUrl : '',
+      token: v ? v.clusterSvcToken: '',
+    }
+  },
 
   validate: (values: any) => {
     const errors: any = {};
@@ -138,7 +139,6 @@ const AddClusterForm: any = withFormik({
   handleSubmit: (values, formikBag: any) => {
     // Formik will set isSubmitting to true, so we need to flip this back off
     formikBag.setSubmitting(false);
-    // Manually trigger formik submit
     formikBag.props.onAddEditSubmit(values);
   },
 })(InnerAddEditClusterForm);

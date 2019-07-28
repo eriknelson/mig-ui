@@ -11,7 +11,8 @@ import {
   AddEditState,
   AddEditStatus,
   AddEditMode,
-  addEditStatusStr,
+  addEditStatusText,
+  addEditButtonText,
 } from '../../../common/add_edit_state';
 
 const nameKey = 'name';
@@ -19,22 +20,8 @@ const urlKey = 'url';
 const tokenKey = 'token';
 
 const componentTypeStr = 'cluster';
-const currentStatusFn = addEditStatusStr(componentTypeStr);
-
-const addEditButtonText = (props) => {
-  const { state } = props.addEditStatus;
-  switch(state) {
-    case AddEditState.TimedOut: {
-      return 'Try Again';
-    }
-    case AddEditState.Pending: {
-      return 'Add Cluster';
-    }
-    default: {
-      return 'Update Cluster';
-    }
-  }
-}
+const currentStatusFn = addEditStatusText(componentTypeStr);
+const addEditButtonTextFn = addEditButtonText(componentTypeStr);
 
 const isAddEditButtonDisabled = (props, errors, touched) => {
   const hasNotBeenTouched = Object.keys(touched).length === 0;
@@ -54,7 +41,7 @@ const InnerAddClusterForm = ({
   // Formik doesn't like addEditStatus destructured in the signature for some reason
   const currentStatus = props.addEditStatus;
 
-  const [isTokenHidden, setIsTokenHidden ] = useState(true);
+  const [ isTokenHidden, setIsTokenHidden ] = useState(true);
   const toggleHideToken = e => {
     e.preventDefault();
     e.stopPropagation();
@@ -114,7 +101,7 @@ const InnerAddClusterForm = ({
         )}
       </FormGroup>
       <Button type="submit" isDisabled={isAddEditButtonDisabled(props, errors, touched)}>
-        {addEditButtonText(props)}
+        {addEditButtonTextFn(currentStatus)}
       </Button>
       <h3>Status:</h3>
       <div>{currentStatusFn(currentStatus)}</div>

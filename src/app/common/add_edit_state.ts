@@ -51,7 +51,7 @@ export const AddEditWatchTimeout = addEditTimeoutSeconds * 1000;
 const addEditPollIntervalSeconds = 4;
 export const AddEditWatchTimeoutPollInterval = addEditPollIntervalSeconds * 1000;
 
-export const addEditStatusStr = (componentType: string) => (status: AddEditStatus) => {
+export const addEditStatusText = (componentType: string) => (status: AddEditStatus) => {
   switch(status.state) {
     case AddEditState.Pending: {
       return `Ready to create a ${componentType}`;
@@ -70,6 +70,20 @@ export const addEditStatusStr = (componentType: string) => (status: AddEditStatu
     }
     default: {
       return `AddEditStatus fell into an unknown state`;
+    }
+  }
+}
+
+export const addEditButtonText = (componentType: string) => (status: AddEditStatus) => {
+  switch(status.state) {
+    case AddEditState.TimedOut: {
+      return 'Try Again';
+    }
+    case AddEditState.Pending: {
+      return `Add ${componentType}`;
+    }
+    default: {
+      return `Update ${componentType}`;
     }
   }
 }

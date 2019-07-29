@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Flex, Box } from '@rebass/emotion';
 import {
   Button,
@@ -12,11 +12,12 @@ import AddEditStorageModal from '../../../../storage/components/AddEditStorageMo
 import { LinkIcon } from '@patternfly/react-icons';
 import { useOpenModal } from '../../../duck/hooks';
 import ConfirmModal from '../../../../common/components/ConfirmModal';
+import { StorageContext } from '../../../duck/context';
 
 const StorageItem = ({ storage, storageIndex, isLoading, removeStorage, ...props }) => {
   const associatedPlanCount = props.associatedPlans[storage.MigStorage.metadata.name];
   const planText = associatedPlanCount === 1 ? 'plan' : 'plans';
-  const [isOpen, toggleOpen] = useOpenModal(false);
+  const [isAddEditModalOpen, toggleIsAddEditModalOpen] = useOpenModal(false);
   const [isConfirmOpen, toggleConfirmOpen] = useOpenModal(false);
   const name = storage.MigStorage.metadata.name;
   const bucketName = storage.MigStorage.spec.backupStorageConfig.awsBucketName;
@@ -50,6 +51,13 @@ const StorageItem = ({ storage, storageIndex, isLoading, removeStorage, ...props
     }
   };
 
+  const storageContext = useContext(StorageContext);
+
+  const editStorage = () => {
+    storageContext.watchStorageAddEditStatus(name);
+    toggleIsAddEditModalOpen()
+  }
+
   return (
     <DataListItem key={storageIndex} aria-labelledby="">
       <DataListItemRow>
@@ -70,12 +78,15 @@ const StorageItem = ({ storage, storageIndex, isLoading, removeStorage, ...props
             <DataListCell key="actions" width={2}>
               <Flex justifyContent="flex-end">
                 <Box mx={1}>
-                  <Button onClick={toggleOpen} variant="secondary">
+                  <Button onClick={editStorage} variant="secondary">
                     Edit
                   </Button>
                   <AddEditStorageModal
-                    isOpen={isOpen}
-                    onHandleClose={toggleOpen}
+                    isOpen={isAddEditModalOpen}
+                    onHandleClose={toggleIsAddEditModalOpen}
+                    initialStorageValues={{
+                      name, bucketName, bucketRegion, accessKey, secret,
+                    }}
                   />
                 </Box>
                 <Box mx={1}>

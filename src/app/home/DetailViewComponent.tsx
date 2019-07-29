@@ -8,12 +8,17 @@ import storageSelectors from '../storage/duck/selectors';
 import planSelectors from '../plan/duck/selectors';
 import { Creators as PlanActionCreators } from '../plan/duck/actions';
 import { Creators as ClusterActionCreators } from '../cluster/duck/actions';
+import { Creators as StorageActionCreators } from '../storage/duck/actions';
 import { startDataListPolling, stopDataListPolling } from '../common/duck/actions';
 import ClusterDataListItem from './components/DataList/Clusters/ClusterDataListItem';
 import StorageDataListItem from './components/DataList/Storage/StorageDataListItem';
 import PlanDataListItem from './components/DataList/Plans/PlanDataListItem';
 import { DataList } from '@patternfly/react-core';
-import { PlanContext, ClusterContext } from './duck/context';
+import {
+  PlanContext,
+  ClusterContext,
+  StorageContext,
+ } from './duck/context';
 import { StatusPollingInterval } from '../common/duck/sagas';
 import { createAddEditStatus, AddEditState, AddEditMode } from '../common/add_edit_state';
 
@@ -38,6 +43,7 @@ interface IProps {
   startDataListPolling: (params) => void;
   stopDataListPolling: () => void;
   watchClusterAddEditStatus: (string) => void;
+  watchStorageAddEditStatus: (string) => void;
 }
 
 interface IState {
@@ -130,6 +136,7 @@ class DetailViewComponent extends Component<IProps, IState> {
       clusterAssociatedPlans,
       storageAssociatedPlans,
       watchClusterAddEditStatus,
+      watchStorageAddEditStatus,
     } = this.props;
     const { isWizardOpen } = this.state;
 
@@ -148,13 +155,15 @@ class DetailViewComponent extends Component<IProps, IState> {
               removeCluster={this.props.removeCluster}
             />
           </ClusterContext.Provider>
-          <StorageDataListItem
-            dataList={allStorage}
-            id="storageList"
-            associatedPlans={storageAssociatedPlans}
-            isLoading={this.props.isMigrating || this.props.isStaging}
-            removeStorage={this.props.removeStorage}
-          />
+          <StorageContext.Provider value={{ watchStorageAddEditStatus }}>
+            <StorageDataListItem
+              dataList={allStorage}
+              id="storageList"
+              associatedPlans={storageAssociatedPlans}
+              isLoading={this.props.isMigrating || this.props.isStaging}
+              removeStorage={this.props.removeStorage}
+            />
+          </StorageContext.Provider>
           <PlanContext.Provider value={{ handleStageTriggered }}>
             <PlanDataListItem
               planList={plansWithStatus}
@@ -213,6 +222,13 @@ const mapDispatchToProps = dispatch => {
         createAddEditStatus(AddEditState.Watching, AddEditMode.Edit)
       ));
       dispatch(ClusterActionCreators.watchClusterAddEditStatus(clusterName));
+    },
+    watchStorageAddEditStatus: (storageName) => {
+      // Push the add edit status into watching state, and start watching
+      dispatch(StorageActionCreators.setStorageAddEditStatus(
+        createAddEditStatus(AddEditState.Watching, AddEditMode.Edit)
+      ));
+      dispatch(StorageActionCreators.watchStorageAddEditStatus(storageName));
     }
   };
 };

@@ -6,7 +6,7 @@ import AddEditStorageForm from './AddEditStorageForm';
 import { Creators } from '../../duck/actions';
 import { Modal } from '@patternfly/react-core';
 import { PollingContext } from '../../../home/duck/context';
-import { AddEditMode } from '../../../common/add_edit_state';
+import { AddEditMode, defaultAddEditStatus } from '../../../common/add_edit_state';
 
 const AddEditStorageModal = ({
   addEditStatus,
@@ -67,8 +67,11 @@ export default connect(
   },
   dispatch => ({
     addStorage: storageValues => dispatch(Creators.addStorageRequest(storageValues)),
-    updateStorage: updatedStorageValues => console.log('updateStorage: ', updatedStorageValues),
+    updateStorage: updatedStorageValues => dispatch(
+      Creators.updateStorageRequest(updatedStorageValues)),
     cancelAddEditWatch: () => dispatch(Creators.cancelWatchStorageAddEditStatus()),
-    resetAddEditState: () => console.log('resetAddEditState'),
+    resetAddEditState: () => {
+      dispatch(Creators.setStorageAddEditStatus(defaultAddEditStatus()));
+    },
   })
 )(AddEditStorageModal);

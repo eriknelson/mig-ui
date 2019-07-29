@@ -7,101 +7,12 @@ import { select } from 'redux-saga/effects';
 import { CoreNamespacedResource, CoreNamespacedResourceKind } from '../../../client/resources';
 
 import {
-  createStorageSecret,
-  createMigStorage,
-  updateMigStorage,
-  updateStorageSecret,
-} from '../../../client/resources/conversions';
-import {
   alertSuccessTimeout,
   alertErrorTimeout,
 } from '../../common/duck/actions';
 
-const addStorageSuccess = Creators.addStorageSuccess;
-const updateStorageSuccess = Creators.updateStorageSuccess;
 const removeStorageSuccess = Creators.removeStorageSuccess;
 const updateSearchTerm = Creators.updateSearchTerm;
-
-const addStorage = storageValues => {
-  return async (dispatch, getState) => {
-    try {
-      const state = getState();
-      const { migMeta } = state;
-      const client: IClusterClient = ClientFactory.hostCluster(getState());
-
-      const tokenSecret = createStorageSecret(
-        storageValues.name,
-        migMeta.namespace,
-        storageValues.secret,
-        storageValues.accessKey
-      );
-
-      const migStorage = createMigStorage(
-        storageValues.name,
-        storageValues.bucketName,
-        storageValues.bucketRegion,
-        migMeta.namespace,
-        tokenSecret
-      );
-
-      const secretResource = new CoreNamespacedResource(
-        CoreNamespacedResourceKind.Secret,
-        migMeta.namespace
-      );
-      const migStorageResource = new MigResource(MigResourceKind.MigStorage, migMeta.namespace);
-      const arr = await Promise.all([
-        client.create(secretResource, tokenSecret),
-        client.create(migStorageResource, migStorage),
-      ]);
-
-      const storage = arr.reduce((accum, res) => {
-        accum[res.data.kind] = res.data;
-        return accum;
-      }, {});
-      storage.status = storageValues.connectionStatus;
-      dispatch(addStorageSuccess(storage));
-      dispatch(alertSuccessTimeout('Successfully added a repository!'));
-    } catch (err) {
-      dispatch(alertErrorTimeout(err.response.data.message || 'Failed to fetch storage'));
-    }
-  };
-};
-
-const updateStorage = storageValues => {
-  return async (dispatch, getState) => {
-    try {
-      const state = getState();
-      const { migMeta } = state;
-      const client: IClusterClient = ClientFactory.hostCluster(getState());
-
-      const tokenSecret = updateStorageSecret(storageValues.secret, storageValues.accessKey);
-
-      const migStorage = updateMigStorage(storageValues.bucketName, storageValues.bucketRegion);
-
-      const secretResource = new CoreNamespacedResource(
-        CoreNamespacedResourceKind.Secret,
-        migMeta.namespace
-      );
-      const migStorageResource = new MigResource(MigResourceKind.MigStorage, migMeta.namespace);
-
-      const arr = await Promise.all([
-        client.patch(secretResource, storageValues.name, tokenSecret),
-        client.patch(migStorageResource, storageValues.name, migStorage),
-      ]);
-
-      const storage = arr.reduce((accum, res) => {
-        accum[res.data.kind] = res.data;
-        return accum;
-      }, {});
-      storage.status = storageValues.connectionStatus;
-
-      dispatch(updateStorageSuccess(storage));
-      dispatch(alertSuccessTimeout(`Successfully updated repository "${storageValues.name}"!`));
-    } catch (err) {
-      dispatch(alertErrorTimeout(err));
-    }
-  };
-};
 
 const removeStorage = name => {
   return async (dispatch, getState) => {
@@ -174,8 +85,6 @@ function* fetchStorageGenerator() {
 
 export default {
   fetchStorageGenerator,
-  addStorage,
-  updateStorage,
   removeStorage,
   updateSearchTerm,
 };

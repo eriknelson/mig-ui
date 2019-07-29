@@ -18,6 +18,6 @@ export default function* rootSaga() {
     clusterSagas.watchClusterAddEditStatus(),
     storageSagas.watchAddStorageRequest(),
     storageSagas.watchStorageAddEditStatus(),
-    // storageSagas.watchUpdateClusterRequest(),
+    storageSagas.watchUpdateStorageRequest(),
   ]);
 }

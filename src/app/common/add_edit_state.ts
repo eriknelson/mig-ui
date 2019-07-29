@@ -51,6 +51,9 @@ export const AddEditWatchTimeout = addEditTimeoutSeconds * 1000;
 const addEditPollIntervalSeconds = 4;
 export const AddEditWatchTimeoutPollInterval = addEditPollIntervalSeconds * 1000;
 
+const addEditDebounceWaitSeconds = 3;
+export const AddEditDebounceWait = addEditDebounceWaitSeconds * 1000;
+
 export const addEditStatusText = (componentType: string) => (status: AddEditStatus) => {
   switch(status.state) {
     case AddEditState.Pending: {

@@ -28,6 +28,7 @@ import {
   AddEditConditionCritical,
   createAddEditStatusWithMeta,
   AddEditConditionReady,
+  AddEditDebounceWait,
 } from '../../common/add_edit_state';
 
 function* addClusterRequest(action)  {
@@ -178,7 +179,7 @@ function* watchUpdateClusterRequest() {
 
 function* pollClusterAddEditStatus(action) {
   // Give the controller some time to bounce
-  yield delay(3000);
+  yield delay(AddEditDebounceWait);
   while(true) {
     try {
       const state = yield select();

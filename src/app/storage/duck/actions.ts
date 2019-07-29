@@ -15,6 +15,7 @@ const { Creators, Types } = createActions({
   updateStorageRequest: ['storageValues'],
   updateStorageSuccess: ['updatedStorage'],
   watchStorageAddEditStatus: ['storageName'],
+  cancelWatchStorageAddEditStatus: [],
   setIsPollingStorage: ['isPolling'],
 });
 

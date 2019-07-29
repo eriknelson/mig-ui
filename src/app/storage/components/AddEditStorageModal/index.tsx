@@ -68,7 +68,7 @@ export default connect(
   dispatch => ({
     addStorage: storageValues => dispatch(Creators.addStorageRequest(storageValues)),
     updateStorage: updatedStorageValues => console.log('updateStorage: ', updatedStorageValues),
-    cancelAddEditWatch: () => console.log('cancelAddEditWatch'),
+    cancelAddEditWatch: () => dispatch(Creators.cancelWatchStorageAddEditStatus()),
     resetAddEditState: () => console.log('resetAddEditState'),
   })
 )(AddEditStorageModal);

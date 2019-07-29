@@ -22,6 +22,7 @@ import {
   AddEditConditionCritical,
   createAddEditStatusWithMeta,
   AddEditConditionReady,
+  AddEditDebounceWait,
 } from '../../common/add_edit_state';
 
 function* addStorageRequest(action)  {
@@ -66,11 +67,11 @@ function* addStorageRequest(action)  {
 
     yield put(Creators.addStorageSuccess(storage));
 
-    // // Push into watching state
-    // yield put(Creators.setStorageAddEditStatus(
-    //   createAddEditStatus(AddEditState.Watching, AddEditMode.Edit),
-    // ));
-    // yield put(Creators.watchStorageAddEditStatus(storageValues.name));
+    // Push into watching state
+    yield put(Creators.setStorageAddEditStatus(
+      createAddEditStatus(AddEditState.Watching, AddEditMode.Edit),
+    ));
+    yield put(Creators.watchStorageAddEditStatus(storageValues.name));
   } catch(err) {
     // TODO: Creation failed, should enter failed creation state here
     // Also need to rollback the objects that were successfully created.
@@ -164,85 +165,86 @@ function* watchAddStorageRequest() {
 //   yield takeLatest(Creators.updateClusterRequest().type, updateClusterRequest);
 // }
 
-// function* pollClusterAddEditStatus(action) {
-//   // Give the controller some time to bounce
-//   yield delay(3000);
-//   while(true) {
-//     try {
-//       const state = yield select();
-//       const { migMeta } = state;
-//       const { clusterName } = action;
+function* pollStorageAddEditStatus(action) {
+  // Give the controller some time to bounce
+  yield delay(AddEditDebounceWait);
+  while(true) {
+    try {
+      const state = yield select();
+      const { migMeta } = state;
+      const { storageName } = action;
 
-//       const client: IClusterClient = ClientFactory.hostCluster(state);
-//       const migClusterResource = new MigResource(MigResourceKind.MigCluster, migMeta.namespace);
-//       const clusterPollResult = yield client.get(migClusterResource, clusterName);
+      const client: IClusterClient = ClientFactory.hostCluster(state);
+      const migStorageResource = new MigResource(
+        MigResourceKind.MigStorage, migMeta.namespace);
+      const storagePollResult = yield client.get(migStorageResource, storageName);
 
-//       const criticalCond = clusterPollResult.data.status.conditions.find(cond => {
-//         return cond.category === AddEditConditionCritical;
-//       })
+      const criticalCond = storagePollResult.data.status.conditions.find(cond => {
+        return cond.category === AddEditConditionCritical;
+      })
 
-//       if(criticalCond) {
-//         return createAddEditStatusWithMeta(
-//           AddEditState.Critical,
-//           AddEditMode.Edit,
-//           criticalCond.message,
-//           criticalCond.reason,
-//         );
-//       }
+      if(criticalCond) {
+        return createAddEditStatusWithMeta(
+          AddEditState.Critical,
+          AddEditMode.Edit,
+          criticalCond.message,
+          criticalCond.reason,
+        );
+      }
 
-//       const readyCond = clusterPollResult.data.status.conditions.find(cond => {
-//         return cond.type === AddEditConditionReady;
-//       });
+      const readyCond = storagePollResult.data.status.conditions.find(cond => {
+        return cond.type === AddEditConditionReady;
+      });
 
-//       if(readyCond) {
-//         return createAddEditStatusWithMeta(
-//           AddEditState.Ready,
-//           AddEditMode.Edit,
-//           readyCond.message,
-//           '', // Ready has no reason
-//         );
-//       }
+      if(readyCond) {
+        return createAddEditStatusWithMeta(
+          AddEditState.Ready,
+          AddEditMode.Edit,
+          readyCond.message,
+          '', // Ready has no reason
+        );
+      }
 
-//       // No conditions found, let's wait a bit and keep checking
-//       yield delay(AddEditWatchTimeoutPollInterval);
-//     } catch(err) {
-//       // TODO: what happens when the poll fails? Back into that hard error state?
-//       console.error('Hard error branch hit in poll cluster add edit', err);
-//       return;
-//     }
-//   }
-// }
+      // No conditions found, let's wait a bit and keep checking
+      yield delay(AddEditWatchTimeoutPollInterval);
+    } catch(err) {
+      // TODO: what happens when the poll fails? Back into that hard error state?
+      console.error('Hard error branch hit in poll storage add edit', err);
+      return;
+    }
+  }
+}
 
-// function* startWatchingClusterAddEditStatus(action) {
-//   // Start a race, poll until the watch is cancelled (by closing the modal),
-//   // polling times out, or the condition is added, in that order of precedence.
-//   const raceResult = yield race({
-//     addEditResult: call(pollClusterAddEditStatus, action),
-//     timeout: delay(AddEditWatchTimeout),
-//     cancel: take(Creators.cancelWatchClusterAddEditStatus().type),
-//   });
+function* startWatchingStorageAddEditStatus(action) {
+  // Start a race, poll until the watch is cancelled (by closing the modal),
+  // polling times out, or the condition is added, in that order of precedence.
+  const raceResult = yield race({
+    addEditResult: call(pollStorageAddEditStatus, action),
+    timeout: delay(AddEditWatchTimeout),
+    cancel: take(Creators.cancelWatchStorageAddEditStatus().type),
+  });
 
-//   if(raceResult.cancel) {
-//     return;
-//   }
+  if(raceResult.cancel) {
+    return;
+  }
 
-//   const addEditResult: AddEditStatus = raceResult.addEditResult;
+  const addEditResult: AddEditStatus = raceResult.addEditResult;
 
-//   const statusToDispatch = addEditResult || createAddEditStatus(
-//     AddEditState.TimedOut, AddEditMode.Edit);
+  const statusToDispatch = addEditResult || createAddEditStatus(
+    AddEditState.TimedOut, AddEditMode.Edit);
 
-//   yield put(Creators.setClusterAddEditStatus(statusToDispatch));
-// }
+  yield put(Creators.setStorageAddEditStatus(statusToDispatch));
+}
 
-// function* watchStorageAddEditStatus() {
-//   yield takeLatest(
-//     Creators.watchAddStorageRequest().type,
-//     startWatchingStorageAddEditStatus
-//   );
-// }
+function* watchStorageAddEditStatus() {
+  yield takeLatest(
+    Creators.watchStorageAddEditStatus().type,
+    startWatchingStorageAddEditStatus
+  );
+}
 
 export default {
   watchAddStorageRequest,
   // watchUpdateClusterRequest,
-  // watchClusterAddEditStatus,
+  watchStorageAddEditStatus,
 };

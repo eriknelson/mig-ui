@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Flex, Box } from '@rebass/emotion';
-import theme from '../../../../../theme';
 import { DataList, DataListContent } from '@patternfly/react-core';
 import ClusterItem from './ClusterItem';
 import { AddCircleOIcon } from '@patternfly/react-icons';
@@ -14,7 +13,6 @@ const ClusterContent = ({
   associatedPlans,
   migMeta,
   removeCluster,
-  ...props
 }) => {
   const [isOpen, toggleOpen] = useState(false);
   return (
@@ -44,11 +42,14 @@ const ClusterContent = ({
               <Button onClick={() => toggleOpen(!isOpen)} variant="primary">
                 Add Cluster
               </Button>
-              <AddEditClusterModal isOpen={isOpen} />
             </EmptyState>
           </Box>
         </Flex>
       )}
+      <AddEditClusterModal
+        isOpen={isOpen}
+        onHandleClose={toggleOpen}
+      />
     </DataListContent>
   );
 };

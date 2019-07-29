@@ -8,7 +8,7 @@ import {
   DataListItemRow,
 } from '@patternfly/react-core';
 import StatusIcon from '../../../../common/components/StatusIcon';
-import AddStorageModal from '../../../../storage/components/AddEditStorageModal';
+import AddEditStorageModal from '../../../../storage/components/AddEditStorageModal';
 import { LinkIcon } from '@patternfly/react-icons';
 import { useOpenModal } from '../../../duck/hooks';
 import ConfirmModal from '../../../../common/components/ConfirmModal';
@@ -73,15 +73,9 @@ const StorageItem = ({ storage, storageIndex, isLoading, removeStorage, ...props
                   <Button onClick={toggleOpen} variant="secondary">
                     Edit
                   </Button>
-                  <AddStorageModal
+                  <AddEditStorageModal
                     isOpen={isOpen}
                     onHandleClose={toggleOpen}
-                    name={name}
-                    bucketName={bucketName}
-                    bucketRegion={bucketRegion}
-                    accessKey={accessKey}
-                    secret={secret}
-                    mode="update"
                   />
                 </Box>
                 <Box mx={1}>

@@ -117,9 +117,9 @@ const InnerAddEditClusterForm = ({ values, touched, errors, ...props }) => {
       <Flex flexDirection="column">
         <Box m="0 0 1em 0 ">
           <Flex flexDirection="row">
-            <Box m="0 0 1em 0 ">
+            <Box m="auto 10px auto 0 ">
               <Tooltip
-                position={TooltipPosition.top}
+                position={TooltipPosition.right}
                 content={<div>
                   Re-check your cluster's connection state
                 </div>}>
@@ -133,7 +133,7 @@ const InnerAddEditClusterForm = ({ values, touched, errors, ...props }) => {
                 </CheckConnectionButton>
               </Tooltip>
             </Box>
-            <Box m="0 0 1em 0 ">
+            <Box m="auto 10px auto 0 ">
               <ConnectionStatusLabel
                 status={currentStatus}
                 statusText={currentStatusFn(currentStatus)}
@@ -143,7 +143,7 @@ const InnerAddEditClusterForm = ({ values, touched, errors, ...props }) => {
         </Box>
         <Box m="0 0 1em 0 ">
           <Tooltip
-            position={TooltipPosition.top}
+            position={TooltipPosition.right}
             content={<div>
               Add or Edit your Cluster details
             </div>}>

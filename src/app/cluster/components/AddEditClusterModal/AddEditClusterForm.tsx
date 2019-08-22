@@ -24,6 +24,9 @@ import {
   AddEditState,
 } from '../../../common/add_edit_state';
 import ConnectionStatusLabel from '../../../common/components/ConnectionStatusLabel';
+import styled from '@emotion/styled';
+import { css } from '@emotion/core';
+import { RedoIcon } from '@patternfly/react-icons';
 
 const nameKey = 'name';
 const urlKey = 'url';
@@ -49,6 +52,16 @@ const InnerAddEditClusterForm = ({ values, touched, errors, ...props }) => {
   const onClose = () => {
     props.onClose();
   };
+
+  const StyledIcon = styled(RedoIcon)`
+    height: 1em;
+    width: 1em;
+    margin-right: 10px;
+  `;
+
+  const CheckConnectionButton = styled(Button)`
+  padding-left: 0;
+  `;
 
   const isCheckConnectionDisabled =
     currentStatus.mode === AddEditMode.Add ||
@@ -103,38 +116,44 @@ const InnerAddEditClusterForm = ({ values, touched, errors, ...props }) => {
       </FormGroup>
       <Flex flexDirection="column">
         <Box m="0 0 1em 0 ">
-          <Button
-            type="submit"
-            isDisabled={isAddEditButtonDisabled(currentStatus, errors, touched, props.dirty)}
-            style={{marginRight: '10px'}}
-          >
-            {addEditButtonTextFn(currentStatus)}
-          </Button>
+          <Flex flexDirection="row">
+            <Box m="0 0 1em 0 ">
+              <Tooltip
+                position={TooltipPosition.top}
+                content={<div>
+                  Re-check your cluster's connection state
+                </div>}>
+                <CheckConnectionButton
+                  onClick={() => props.checkConnection(values.name)}
+                  variant="link"
+                  icon={<StyledIcon />}
+                  isDisabled={isCheckConnectionDisabled}
+                >
+                  Test connection
+                </CheckConnectionButton>
+              </Tooltip>
+            </Box>
+            <Box m="0 0 1em 0 ">
+              <ConnectionStatusLabel
+                status={currentStatus}
+                statusText={currentStatusFn(currentStatus)}
+              />
+            </Box>
+          </Flex>
+        </Box>
+        <Box m="0 0 1em 0 ">
           <Tooltip
             position={TooltipPosition.top}
             content={<div>
               Add or Edit your Cluster details
-            </div>}><OutlinedQuestionCircleIcon />
+            </div>}>
+            <Button
+              type="submit"
+              isDisabled={isAddEditButtonDisabled(currentStatus, errors, touched, props.dirty)}
+            >
+              {addEditButtonTextFn(currentStatus)}
+            </Button>
           </Tooltip>
-          <Button
-            style={{marginLeft: '10px', marginRight: '10px'}}
-            isDisabled={isCheckConnectionDisabled}
-            onClick={() => props.checkConnection(values.name)}
-          >
-            Check Connection
-          </Button>
-          <Tooltip
-            position={TooltipPosition.top}
-            content={<div>
-              Re-check your cluster's connection state
-            </div>}><OutlinedQuestionCircleIcon />
-          </Tooltip>
-        </Box>
-        <Box m="0 0 1em 0 ">
-          <ConnectionStatusLabel
-            status={currentStatus}
-            statusText={currentStatusFn(currentStatus)}
-          />
         </Box>
         <Box m="auto 0 0 0 ">
           <Button variant="primary" onClick={onClose}>

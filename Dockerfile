@@ -12,6 +12,6 @@ COPY --from=builder /mig-ui/dist /srv/staticroot
 COPY --from=builder /mig-ui/public/favicon.ico /srv/staticroot
 COPY --from=builder /mig-ui/public/index.ejs /srv/staticroot
 COPY --from=builder /mig-ui/deploy/main.js /srv
-COPY --from=builder /mig-ui/node_modules /srv/node_modules
+COPY --from=builder /mig-ui/deploy/node_modules /srv/node_modules
 COPY --from=builder /mig-ui/scripts/entrypoint.sh /usr/bin/entrypoint.sh
 ENTRYPOINT entrypoint.sh

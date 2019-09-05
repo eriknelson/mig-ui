@@ -1,6 +1,0 @@
----
-
-apiVersion: project.openshift.io/v1
-kind: {{ 'ProjectRequest' if state == 'present' else 'Project' }}
-metadata:
-  name: {{ mig_ui_namespace }}

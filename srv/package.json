@@ -1,0 +1,11 @@
+{
+  "name": "mig-ui-srv",
+  "version": "1.0.0",
+  "main": "main.js",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "ejs": "^2.7.1",
+    "express": "^4.17.1"
+  }
+}

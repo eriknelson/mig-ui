@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import clusterOperations from '../cluster/duck/operations';
-import storageOperations from '../storage/duck/operations';
+import clusterSagas from '../cluster/duck/sagas';
+import storageSagas from '../storage/duck/sagas';
 import planOperations from '../plan/duck/operations';
 import clusterSelectors from '../cluster/duck/selectors';
 import storageSelectors from '../storage/duck/selectors';
@@ -97,7 +97,7 @@ const DetailViewComponent: React.FunctionComponent<IProps> = (props) => {
       });
       return;
 
-    } else{
+    } else {
       setAddPlanDisabledObj({
         isAddPlanDisabled: false,
         disabledText: 'Click to create a plan.'
@@ -192,8 +192,8 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = dispatch => {
   return {
-    removeCluster: id => dispatch(clusterOperations.removeCluster(id)),
-    removeStorage: id => dispatch(storageOperations.removeStorage(id)),
+    removeCluster: name => dispatch(ClusterActions.removeClusterRequest(name)),
+    removeStorage: name => dispatch(StorageActions.removeStorageRequest(name)),
     runStage: plan => dispatch(planOperations.runStage(plan)),
     runMigration: (plan, disableQuiesce) => dispatch(planOperations.runMigration(plan, disableQuiesce)),
     updateStageProgress: (plan, progress) =>

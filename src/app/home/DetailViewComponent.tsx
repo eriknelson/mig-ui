@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import clusterOperations from '../cluster/duck/operations';
-import storageOperations from '../storage/duck/operations';
+import clusterSagas from '../cluster/duck/sagas';
+import storageSagas from '../storage/duck/sagas';
 import clusterSelectors from '../cluster/duck/selectors';
 import storageSelectors from '../storage/duck/selectors';
 import planSelectors from '../plan/duck/selectors';
@@ -191,8 +191,8 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = dispatch => {
   return {
-    removeCluster: id => dispatch(clusterOperations.removeCluster(id)),
-    removeStorage: id => dispatch(storageOperations.removeStorage(id)),
+    removeCluster: name => dispatch(ClusterActions.removeClusterRequest(name)),
+    removeStorage: name => dispatch(StorageActions.removeStorageRequest(name)),
     runStageRequest: plan => dispatch(PlanActions.runStageRequest(plan)),
     runMigrationRequest: (plan, disableQuiesce) => dispatch(PlanActions.runMigrationRequest(plan, disableQuiesce)),
     updateStageProgress: (plan, progress) =>

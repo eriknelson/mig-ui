@@ -17,6 +17,8 @@ class LoginComponent extends React.Component<IProps> {
     const migMeta = this.props.migMeta;
 
     if (!oauthMeta) {
+      console.log('componentDidMount')
+      console.log('oauthmeta not found, fetching...')
       this.props.fetchOauthMeta(migMeta.clusterApi);
       return;
     }
@@ -26,11 +28,13 @@ class LoginComponent extends React.Component<IProps> {
     const migMeta = this.props.migMeta;
     const routerLoc = this.props.router.location;
     const oauthMeta = this.props.auth.oauthMeta;
+    console.log('componentDidUpdate');
     if (!oauthMeta) {
       this.props.fetchOauthMeta(migMeta.clusterApi);
       return;
     }
 
+    console.log('have oauthMeta: ', oauthMeta)
     const freshOauthMeta = !prevProps.auth.oauthMeta && !!oauthMeta;
     const urlParams = new URLSearchParams(window.location.search);
     const shouldRefresh = urlParams.get('action') === 'refresh';

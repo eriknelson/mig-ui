@@ -23,6 +23,11 @@ export const TokenActionTypes = {
 
 // NATODO what can we abstract out here? Take lessons from Migration Analytics?
 
+const updateTokens = (updatedTokens: IToken[]) => ({
+  type: TokenActionTypes.UPDATE_TOKENS,
+  updatedTokens,
+});
+
 const migTokenFetchRequest = () => ({
   type: TokenActionTypes.MIG_TOKEN_FETCH_REQUEST,
 });
@@ -36,4 +41,34 @@ const migTokenFetchFailure = () => ({
   type: TokenActionTypes.MIG_TOKEN_FETCH_FAILURE,
 });
 
-// NATODO etc, for the other actions
+const startTokenPolling = (params?: any) => ({
+  type: TokenActionTypes.TOKEN_POLL_START,
+  params,
+});
+
+const stopTokenPolling = () => ({
+  type: TokenActionTypes.TOKEN_POLL_STOP,
+});
+
+
+// NATODO: Implement and/or remove unecessary copies
+export const TokenActions = {
+  // addClusterSuccess,
+  // addClusterFailure,
+  // removeClusterRequest,
+  // removeClusterSuccess,
+  // removeClusterFailure,
+  // updateClusterSuccess,
+  // updateSearchTerm,
+  // setClusterAddEditStatus,
+  // watchClusterAddEditStatus,
+  // cancelWatchClusterAddEditStatus,
+  // clusterFetchSuccess,
+  // clusterFetchRequest,
+  // clusterFetchFailure,
+  // addClusterRequest,
+  // updateClusterRequest,
+  updateTokens,
+  startTokenPolling,
+  stopTokenPolling,
+};

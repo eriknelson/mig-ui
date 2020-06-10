@@ -11,10 +11,12 @@ import { PollingContext } from './home/duck/context';
 import { StatusPollingInterval } from './common/duck/sagas';
 import { clusterSagas } from './cluster/duck';
 import { storageSagas } from './storage/duck';
+import { planSagas } from './plan/duck';
+import { tokenSagas } from './token/duck';
 import { ClusterActions } from './cluster/duck/actions';
 import { StorageActions } from './storage/duck/actions';
 import { PlanActions } from './plan/duck/actions';
-import planSagas from './plan/duck/sagas';
+import { TokenActions } from './token/duck/actions';
 import AlertModal from './common/components/AlertModal';
 import ErrorModal from './common/components/ErrorModal';
 import { ICluster } from './cluster/duck/types';
@@ -32,9 +34,12 @@ interface IProps {
   stopStoragePolling: () => void;
   startClusterPolling: (params) => void;
   stopClusterPolling: () => void;
+  startTokenPolling: (params) => void;
+  stopTokenPolling: () => void;
   updateClusters: (updatedClusters) => void;
   updateStorages: (updatedStorages) => void;
   updatePlans: (updatedPlans) => void;
+  updateTokens: (updatedTokens) => void;
   clusterList: ICluster[];
 }
 
@@ -51,9 +56,12 @@ const AppComponent: React.SFC<IProps> = ({
   stopStoragePolling,
   startClusterPolling,
   stopClusterPolling,
+  startTokenPolling,
+  stopTokenPolling,
   updateClusters,
   updateStorages,
   updatePlans,
+  updateTokens,
   clusterList,
 }) => {
   const handlePlanPoll = (response) => {
@@ -75,6 +83,14 @@ const AppComponent: React.SFC<IProps> = ({
   const handleStoragePoll = (response) => {
     if (response) {
       updateStorages(response.updatedStorages);
+      return true;
+    }
+    return false;
+  };
+
+  const handleTokenPoll = (response) => {
+    if (response) {
+      updateTokens(response.updatedTokens);
       return true;
     }
     return false;
@@ -119,6 +135,19 @@ const AppComponent: React.SFC<IProps> = ({
     startStoragePolling(storagePollParams);
   };
 
+  const startDefaultTokenPolling = () => {
+    const tokenPollParams = {
+      asyncFetch: tokenSagas.fetchTokensGenerator,
+      callback: handleTokenPoll,
+      delay: StatusPollingInterval,
+      retryOnFailure: true,
+      retryAfter: 5,
+      stopAfterRetries: 2,
+      pollName: 'token',
+    };
+    startTokenPolling(tokenPollParams);
+  };
+
   return (
     <React.Fragment>
       <AlertModal alertMessage={progressMessage} alertType="info" />
@@ -130,18 +159,22 @@ const AppComponent: React.SFC<IProps> = ({
           startDefaultClusterPolling: () => startDefaultClusterPolling(),
           startDefaultStoragePolling: () => startDefaultStoragePolling(),
           startDefaultPlanPolling: () => startDefaultPlanPolling(),
+          startDefaultTokenPolling: () => startDefaultTokenPolling(),
           stopClusterPolling: () => stopClusterPolling(),
           stopStoragePolling: () => stopStoragePolling(),
           stopPlanPolling: () => stopPlanPolling(),
+          stopTokenPolling: () => stopTokenPolling(),
           startAllDefaultPolling: () => {
             startDefaultClusterPolling();
             startDefaultStoragePolling();
             startDefaultPlanPolling();
+            startDefaultTokenPolling();
           },
           stopAllPolling: () => {
             stopClusterPolling();
             stopStoragePolling();
             stopPlanPolling();
+            stopTokenPolling();
           },
         }}
       >
@@ -181,8 +214,11 @@ export default connect(
     stopStoragePolling: () => dispatch(StorageActions.stopStoragePolling()),
     startClusterPolling: (params) => dispatch(ClusterActions.startClusterPolling(params)),
     stopClusterPolling: () => dispatch(ClusterActions.stopClusterPolling()),
+    startTokenPolling: (params) => dispatch(TokenActions.startTokenPolling(params)),
+    stopTokenPolling: () => dispatch(TokenActions.stopTokenPolling()),
     updateClusters: (updatedClusters) => dispatch(ClusterActions.updateClusters(updatedClusters)),
     updateStorages: (updatedStorages) => dispatch(StorageActions.updateStorages(updatedStorages)),
     updatePlans: (updatedPlans) => dispatch(PlanActions.updatePlans(updatedPlans)),
+    updateTokens: (updatedTokens) => dispatch(TokenActions.updateTokens(updatedTokens)),
   })
 )(AppComponent);

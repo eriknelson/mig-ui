@@ -18,7 +18,20 @@ export interface IMigToken {
   };
 }
 
+// NATODO: Define the token secret type
+// probably needs some shared fields like kind and metadata
+// export interface ITokenSecret {
+//   data: {
+//     token: string;
+//   }
+// }
+
 export interface IToken {
   MigToken: IMigToken;
-  // NATODO what else?
+  // Secret: ITokenSecret;
+  Secret: {
+    data: {
+      token: string;
+    };
+  };
 }

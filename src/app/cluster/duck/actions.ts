@@ -1,5 +1,6 @@
 import { IAddEditStatus } from '../../common/add_edit_state';
-import { IMigCluster } from '../../../client/resources/conversions';
+// import { IMigCluster } from '../../../client/resources/conversions';
+import { IMigCluster } from './types';
 
 export const ClusterActionTypes = {
   UPDATE_CLUSTERS: 'UPDATE_CLUSTERS',

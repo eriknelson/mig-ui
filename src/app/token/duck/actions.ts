@@ -1,7 +1,6 @@
+import { IToken, ITokenFormValues } from './types';
+
 // NATODO do we need all of these? figure out the CRUD/polling
-
-import { IToken } from './types';
-
 export const TokenActionTypes = {
   MIG_TOKEN_FETCH_REQUEST: 'MIG_TOKEN_FETCH_REQUEST',
   MIG_TOKEN_FETCH_SUCCESS: 'MIG_TOKEN_FETCH_SUCCESS',
@@ -22,6 +21,20 @@ export const TokenActionTypes = {
 };
 
 // NATODO what can we abstract out here? Take lessons from Migration Analytics?
+const addTokenRequest = (tokenValues: ITokenFormValues) => ({
+  type: TokenActionTypes.ADD_TOKEN_REQUEST,
+  tokenValues,
+});
+
+const addTokenSuccess = (newMigToken: IToken) => ({
+  type: TokenActionTypes.ADD_TOKEN_SUCCESS,
+  newMigToken,
+});
+
+const addTokenFailure = (error) => ({
+  type: TokenActionTypes.ADD_TOKEN_FAILURE,
+  error,
+});
 
 const updateTokens = (updatedTokens: IToken[]) => ({
   type: TokenActionTypes.UPDATE_TOKENS,
@@ -41,9 +54,9 @@ const migTokenFetchFailure = () => ({
   type: TokenActionTypes.MIG_TOKEN_FETCH_FAILURE,
 });
 
-const startTokenPolling = (params?: any) => ({
+const startTokenPolling = (params) => ({
   type: TokenActionTypes.TOKEN_POLL_START,
-  params,
+  params
 });
 
 const stopTokenPolling = () => ({
@@ -53,8 +66,6 @@ const stopTokenPolling = () => ({
 
 // NATODO: Implement and/or remove unecessary copies
 export const TokenActions = {
-  // addClusterSuccess,
-  // addClusterFailure,
   // removeClusterRequest,
   // removeClusterSuccess,
   // removeClusterFailure,
@@ -66,8 +77,10 @@ export const TokenActions = {
   // clusterFetchSuccess,
   // clusterFetchRequest,
   // clusterFetchFailure,
-  // addClusterRequest,
   // updateClusterRequest,
+  addTokenSuccess,
+  addTokenFailure,
+  addTokenRequest,
   updateTokens,
   startTokenPolling,
   stopTokenPolling,

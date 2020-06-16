@@ -35,3 +35,23 @@ export interface IToken {
     };
   };
 }
+
+
+export enum TokenFieldKey {
+  Name = 'name',
+  AssociatedClusterName = 'associatedClusterName',
+  TokenType = 'tokenType',
+  ServiceAccountToken = 'serviceAccountToken',
+}
+
+export enum TokenType {
+  OAuth = 'oAuth',
+  ServiceAccount = 'serviceAccount',
+}
+
+export interface ITokenFormValues {
+  [TokenFieldKey.Name]: string;
+  [TokenFieldKey.AssociatedClusterName]: string;
+  [TokenFieldKey.TokenType]: TokenType;
+  [TokenFieldKey.ServiceAccountToken]: string;
+}

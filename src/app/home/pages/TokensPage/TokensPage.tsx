@@ -39,6 +39,8 @@ ITokensPageBaseProps) => {
   //NATODO: implement loading state for tokens
   const isFetchingInitialTokens = false;
 
+  console.log('upper tokenList:', tokenList);
+
   return (
     <>
       <PageSection variant="light">
@@ -110,10 +112,11 @@ const fakeTokens = [
 ];
 
 const mapStateToProps = (state: IReduxState) => ({
-  tokenList: fakeTokens, // NATODO pull real data from redux here
+  // tokenList: fakeTokens, // NATODO pull real data from redux here
+  tokenList: state.token.tokenList, // NATODO pull real data from redux here
   clusterList: clusterSelectors.getAllClusters(state),
   //NATODO: implement loading state for tokens
-  // isFetchingInitialTokens: state.token.isFetchingInitialTokens,
+  isFetchingInitialTokens: state.token.isFetchingInitialTokens,
 });
 
 const mapDispatchToProps = (dispatch) => ({});

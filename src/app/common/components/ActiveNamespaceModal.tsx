@@ -81,7 +81,7 @@ const ActiveNamespaceModal: React.FunctionComponent<IProps> = (props) => {
                     const LS_KEY_ACTIVE_NAMESPACE = 'activeNamespace';
                     localStorage.setItem(
                       LS_KEY_ACTIVE_NAMESPACE,
-                      JSON.stringify(selectedActiveNamespace)
+                      selectedActiveNamespace
                     );
                     setNamespaceSelectIsOpen(false);
                     setActiveNamespace(selectedActiveNamespace);

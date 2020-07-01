@@ -1,6 +1,7 @@
 import { IToken, ITokenFormValues } from './types';
 
 export const TokenActionTypes = {
+  UPDATE_HOST_TOKEN_REQUEST: 'UPDATE_HOST_TOKEN',
   MIG_TOKEN_FETCH_REQUEST: 'MIG_TOKEN_FETCH_REQUEST',
   MIG_TOKEN_FETCH_SUCCESS: 'MIG_TOKEN_FETCH_SUCCESS',
   MIG_TOKEN_FETCH_FAILURE: 'MIG_TOKEN_FETCH_FAILURE',
@@ -20,6 +21,10 @@ export const TokenActionTypes = {
 };
 
 // NATODO what can we abstract out here? Take lessons from Migration Analytics?
+const updateHostTokenRequest = () => ({
+  type: TokenActionTypes.UPDATE_HOST_TOKEN_REQUEST,
+});
+
 const addTokenRequest = (tokenValues: ITokenFormValues) => ({
   type: TokenActionTypes.ADD_TOKEN_REQUEST,
   tokenValues,
@@ -76,6 +81,7 @@ export const TokenActions = {
   // clusterFetchRequest,
   // clusterFetchFailure,
   // updateClusterRequest,
+  updateHostTokenRequest,
   addTokenSuccess,
   addTokenFailure,
   addTokenRequest,

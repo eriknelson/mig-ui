@@ -70,6 +70,7 @@ export default function* rootSaga() {
     storageSagas.watchStorageAddEditStatus(),
     storageSagas.watchUpdateStorageRequest(),
     tokenSagas.watchAddTokenRequest(),
+    tokenSagas.watchUpdateHostTokenRequest(),
     authSagas.watchAuthEvents(),
   ]);
 }

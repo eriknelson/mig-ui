@@ -22,17 +22,21 @@ import { IReduxState } from '../../../../reducers';
 import { IToken } from '../../../token/duck/types';
 import { ICluster } from '../../../cluster/duck/types';
 import AddEditTokenModal from '../../../common/components/AddEditTokenModal';
+import { AuthActionTypes } from '../../../auth/duck/actions';
+import { TokenActions } from '../../../token/duck/actions';
 
 interface ITokensPageBaseProps {
   tokenList: IToken[];
   clusterList: ICluster[];
   isFetchingInitialTokens: boolean;
+  addCurrentUserToken:() => void;
 }
 
 const TokensPageBase: React.FunctionComponent<ITokensPageBaseProps> = ({
   tokenList,
   clusterList,
   isFetchingInitialTokens,
+  addCurrentUserToken,
 }: //NATODO: implement loading state for tokens
 ITokensPageBaseProps) => {
   const [isAddEditModalOpen, toggleAddEditModal] = useOpenModal(false);
@@ -58,6 +62,10 @@ ITokensPageBaseProps) => {
           <Title size="lg">Add token</Title>
           <Button onClick={toggleAddEditModal} variant="primary">
             Add token
+          </Button>
+          <div></div>
+          <Button onClick={addCurrentUserToken} variant="primary">
+            DEBUG: Add current user token
           </Button>
         </EmptyState>
       );
@@ -106,6 +114,8 @@ const mapStateToProps = (state: IReduxState) => ({
   isFetchingInitialTokens: state.token.isFetchingInitialTokens,
 });
 
-const mapDispatchToProps = (dispatch) => ({});
+const mapDispatchToProps = (dispatch) => ({
+  addCurrentUserToken: () => dispatch(TokenActions.updateHostTokenRequest()),
+});
 
 export const TokensPage = connect(mapStateToProps, mapDispatchToProps)(TokensPageBase);

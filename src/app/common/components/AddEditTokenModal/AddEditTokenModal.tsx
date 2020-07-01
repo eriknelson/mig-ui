@@ -55,6 +55,7 @@ const AddEditTokenModal: React.FunctionComponent<IAddEditTokenModalProps> = ({
     addToken(tokenValues);
     onTokenCreated && onTokenCreated(tokenValues.name);
     onClose();
+    pollingContext.startAllDefaultPolling();
   };
 
   return (

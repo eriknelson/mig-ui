@@ -60,7 +60,9 @@ function* addTokenRequest(action) {
       // NATODO: Get OAuth token from values and set the migTokenSecretData to that
       // should be coming out of localstorage, but let the event handler in the front-end
       // handle that and set the appropriate form value
-      console.error('NOT IMPLEMENTED: Add OAuth TokenType');
+      migTokenSecretData = tokenValues.serviceAccountToken; // NATODO: This is absolutely wrong
+      // but stuffing it into the secret data because we need to get it from somewhere.
+      // Do this correctly...
       break;
     }
     case TokenType.ServiceAccount: {
@@ -141,14 +143,39 @@ function* addTokenRequest(action) {
   );
 }
 
+
+// NATODO: Handle this better
+const DEFAULT_HOST_TOKEN_NAME = 'host-oauth';
+
+function* updateHostTokenRequest() {
+  const state = yield select();
+  const { migMeta } = state;
+
+  const tokenValues: ITokenFormValues = {
+    name: DEFAULT_HOST_TOKEN_NAME,
+    // this should come from something that actually looks up the host based on the
+    // isHost field on a MigCluster that will live in the state.cluster.clusterList
+    associatedClusterName: 'host',
+    tokenType: TokenType.OAuth,
+    serviceAccountToken: state.auth.user.access_token,
+  }
+
+  yield addTokenRequest({tokenValues})
+}
+
 function* watchAddTokenRequest() {
   yield takeLatest(TokenActionTypes.ADD_TOKEN_REQUEST, addTokenRequest);
+}
+
+function* watchUpdateHostTokenRequest() {
+  yield takeLatest(TokenActionTypes.UPDATE_HOST_TOKEN_REQUEST, updateHostTokenRequest);
 }
 
 export default {
   // NATODO: Implement and/or remove unecessary copies
   // watchRemoveClusterRequest,
   watchAddTokenRequest,
+  watchUpdateHostTokenRequest,
   // watchUpdateClusterRequest,
   // watchClusterAddEditStatus,
   fetchTokensGenerator,
